@@ -22,16 +22,12 @@
         "noUnusedParameters": true,
         "erasableSyntaxOnly": true,
         "noFallthroughCasesInSwitch": true,
-<<<<<<< HEAD
-        "noUncheckedSideEffectImports": true
-=======
         "noUncheckedSideEffectImports": true,
 
         "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"]
         }
->>>>>>> 799ffd25acdae32976df3784fde5618e0b678d58
     },
     "include": ["src"]
 }
