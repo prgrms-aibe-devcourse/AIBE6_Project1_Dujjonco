@@ -82,7 +82,7 @@ export default async function handler(req: any, res: any) {
             }
         }
 
-        // 4. 모든 타입이 합쳐진 결과 반환
+        // 모든 타입이 합쳐진 결과 반환
         return res.status(200).json({
             success: true,
             page: pageNo,
