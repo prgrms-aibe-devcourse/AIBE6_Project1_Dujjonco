@@ -1,33 +1,33 @@
 // 경로: api/fetch-places.ts (프로젝트 최상단 api 폴더)
 
 export default async function handler(req: any, res: any) {
-    const contentTypeId = req.query.type || '39'
     const pageNo = req.query.page || '1'
     const numOfRows = '20'
-
     const SERVICE_KEY = process.env.DATA_API_KEY
-
-    const listUrl = `http://apis.data.go.kr/B551011/KorWithService2/areaBasedList2?serviceKey=${SERVICE_KEY}&numOfRows=${numOfRows}&pageNo=${pageNo}&MobileOS=ETC&MobileApp=AppTest&_type=json&contentTypeId=${contentTypeId}`
+    
+    // 1. 가져올 타입들 정의
+    const contentTypes = ['12', '32', '39']
+    const mergedData = [] // 모든 타입의 데이터를 합칠 바구니
 
     try {
-        const listRes = await fetch(listUrl)
-        const listData = await listRes.json()
+        // 2. 타입별로 반복문 시작
+        for (const typeId of contentTypes) {
+            const listUrl = `http://apis.data.go.kr/B551011/KorWithService2/areaBasedList2?serviceKey=${SERVICE_KEY}&numOfRows=${numOfRows}&pageNo=${pageNo}&MobileOS=ETC&MobileApp=AppTest&_type=json&contentTypeId=${typeId}`
 
-        if (!listData.response?.body?.items) {
-            return res.status(200).json({ success: true, message: '더 이상 가져올 데이터가 없습니다.' })
-        }
+            const listRes = await fetch(listUrl)
+            const listData = await listRes.json()
 
-        const rawItems = listData.response.body.items.item
-        const mergedData = []
+            const rawItems = listData.response?.body?.items?.item
+            if (!rawItems) continue; // 이 타입에 데이터가 없으면 다음 타입으로 패스
 
-        for (const item of rawItems) {
-            const detailUrl = `http://apis.data.go.kr/B551011/KorWithService2/detailWithTour2?serviceKey=${SERVICE_KEY}&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${item.contentid}`
+            for (const item of rawItems) {
+                const detailUrl = `http://apis.data.go.kr/B551011/KorWithService2/detailWithTour2?serviceKey=${SERVICE_KEY}&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${item.contentid}`
 
-            const detailRes = await fetch(detailUrl)
-            const detailData = await detailRes.json()
-            const detail = detailData.response?.body?.items?.item?.[0] || {}
+                const detailRes = await fetch(detailUrl)
+                const detailData = await detailRes.json()
+                const detail = detailData.response?.body?.items?.item?.[0] || {}
 
-            mergedData.push({
+               mergedData.push({
                 // --- 0. Place 기본 정보 ---
                 content_id: item.contentid,
                 content_type: Number(item.contenttypeid),
@@ -76,16 +76,21 @@ export default async function handler(req: any, res: any) {
                 babysparechair: detail.babysparechair || null,
                 infantsfamilyetc: detail.infantsfamilyetc || null,
             })
+                
+                // 509 에러 방지용 미세한 지연 
+                await new Promise(resolve => setTimeout(resolve, 100)); 
+            }
         }
 
-        // Vercel 표준 응답 방식
+        // 모든 타입이 합쳐진 결과 반환
         return res.status(200).json({
             success: true,
             page: pageNo,
-            type: contentTypeId,
-            count: mergedData.length,
+            total_types: contentTypes,
+            total_count: mergedData.length,
             data: mergedData,
         })
+
     } catch (error: any) {
         console.error('데이터 가공 중 에러 발생:', error)
         return res.status(500).json({ success: false, error: error.message })
