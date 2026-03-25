@@ -69,11 +69,8 @@
     "vaul": "1.1.2"
   },
   "devDependencies": {
-<<<<<<< HEAD
-    "@tailwindcss/vite": "4.1.12",
-=======
     "@tailwindcss/vite": "^4.1.12",
->>>>>>> 799ffd25acdae32976df3784fde5618e0b678d58
+
     "@types/node": "^25.5.0",
     "@vitejs/plugin-react": "4.7.0",
     "prettier": "^3.8.1",
