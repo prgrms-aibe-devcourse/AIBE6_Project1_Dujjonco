@@ -1,10 +1,10 @@
-import { AuthProvider } from "../contexts/AuthContext";
-import { Register } from "./Register";
+import { AuthProvider } from '../contexts/AuthContext'
+import { Register } from './Register'
 
 export function RegisterWrapper() {
-  return (
-    <AuthProvider>
-      <Register />
-    </AuthProvider>
-  );
+    return (
+        <AuthProvider>
+            <Register />
+        </AuthProvider>
+    )
 }
