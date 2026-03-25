@@ -5,6 +5,7 @@ import { FacilityDetail } from "./components/FacilityDetail";
 import { LoginWrapper as Login } from "./components/LoginWrapper";
 import { RegisterWrapper as Register } from "./components/RegisterWrapper";
 import { MyPage } from "./components/MyPage";
+import { Community } from "./components/Community";
 import { NotFound } from "./components/NotFound";
 
 export const router = createBrowserRouter([
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
       { index: true, Component: Home },
       { path: "facility/:id", Component: FacilityDetail },
       { path: "mypage", Component: MyPage },
+      { path: "community", Component: Community },
       { path: "*", Component: NotFound },
     ],
   },
