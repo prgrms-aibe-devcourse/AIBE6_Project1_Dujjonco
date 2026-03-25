@@ -49,43 +49,43 @@ export function MyPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12">
-            <div className="container mx-auto px-4 max-w-4xl">
+            <div className="container mx-auto max-w-4xl px-4">
                 {/* Header */}
-                <div className="text-center mb-8">
-                    <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-6 rounded-full inline-block mb-4">
+                <div className="mb-8 text-center">
+                    <div className="mb-4 inline-block rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 p-6">
                         <User className="size-16 text-white" />
                     </div>
-                    <h1 className="text-3xl mb-2">마이페이지</h1>
+                    <h1 className="mb-2 text-3xl">마이페이지</h1>
                     <p className="text-gray-600">프로필 정보를 관리하세요</p>
                 </div>
 
                 {/* Success Message */}
                 {message && (
-                    <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
+                    <div className="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-700">
                         {message}
                     </div>
                 )}
 
                 {/* Error Message */}
                 {error && (
-                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                    <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
                         {error}
                     </div>
                 )}
 
                 {/* Profile Card */}
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div className="overflow-hidden rounded-2xl bg-white shadow-lg">
                     {/* Header */}
                     <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 text-white">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h2 className="text-2xl mb-1">프로필 정보</h2>
+                                <h2 className="mb-1 text-2xl">프로필 정보</h2>
                                 <p className="text-blue-100">회원님의 정보를 확인하세요</p>
                             </div>
                             {!isEditing ? (
                                 <button
                                     onClick={() => setIsEditing(true)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+                                    className="flex items-center gap-2 rounded-lg bg-white/20 px-4 py-2 transition-colors hover:bg-white/30"
                                 >
                                     <Edit2 className="size-4" />
                                     <span>수정</span>
@@ -94,7 +94,7 @@ export function MyPage() {
                                 <div className="flex gap-2">
                                     <button
                                         onClick={handleSave}
-                                        className="flex items-center gap-2 px-4 py-2 bg-white text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                        className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-blue-600 transition-colors hover:bg-blue-50"
                                     >
                                         <Save className="size-4" />
                                         <span>저장</span>
@@ -105,7 +105,7 @@ export function MyPage() {
                                             setName(user.name)
                                             setAccessibilityType(user.accessibilityType)
                                         }}
-                                        className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+                                        className="flex items-center gap-2 rounded-lg bg-white/20 px-4 py-2 transition-colors hover:bg-white/30"
                                     >
                                         <X className="size-4" />
                                         <span>취소</span>
@@ -116,10 +116,10 @@ export function MyPage() {
                     </div>
 
                     {/* Content */}
-                    <div className="p-8 space-y-6">
+                    <div className="space-y-6 p-8">
                         {/* Name */}
                         <div>
-                            <label className="block text-sm mb-2 text-gray-700 flex items-center gap-2">
+                            <label className="mb-2 block flex items-center gap-2 text-sm text-gray-700">
                                 <User className="size-4 text-gray-500" />
                                 이름
                             </label>
@@ -128,28 +128,28 @@ export function MyPage() {
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                                 />
                             ) : (
-                                <div className="px-4 py-3 bg-gray-50 rounded-lg">{user.name}</div>
+                                <div className="rounded-lg bg-gray-50 px-4 py-3">{user.name}</div>
                             )}
                         </div>
 
                         {/* Email */}
                         <div>
-                            <label className="block text-sm mb-2 text-gray-700 flex items-center gap-2">
+                            <label className="mb-2 block flex items-center gap-2 text-sm text-gray-700">
                                 <Mail className="size-4 text-gray-500" />
                                 이메일
                             </label>
-                            <div className="px-4 py-3 bg-gray-50 rounded-lg text-gray-500">
+                            <div className="rounded-lg bg-gray-50 px-4 py-3 text-gray-500">
                                 {user.email}
-                                <span className="text-xs ml-2">(변경 불가)</span>
+                                <span className="ml-2 text-xs">(변경 불가)</span>
                             </div>
                         </div>
 
                         {/* Accessibility Type */}
                         <div>
-                            <label className="block text-sm mb-2 text-gray-700 flex items-center gap-2">
+                            <label className="mb-2 block flex items-center gap-2 text-sm text-gray-700">
                                 <Accessibility className="size-4 text-gray-500" />
                                 접근성 유형
                             </label>
@@ -157,7 +157,7 @@ export function MyPage() {
                                 <select
                                     value={accessibilityType}
                                     onChange={(e) => setAccessibilityType(e.target.value)}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                                    className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                                 >
                                     {accessibilityTypes.map((type) => (
                                         <option key={type} value={type}>
@@ -166,7 +166,7 @@ export function MyPage() {
                                     ))}
                                 </select>
                             ) : (
-                                <div className="px-4 py-3 bg-blue-50 text-blue-700 rounded-lg font-semibold">
+                                <div className="rounded-lg bg-blue-50 px-4 py-3 font-semibold text-blue-700">
                                     {user.accessibilityType}
                                 </div>
                             )}
@@ -174,11 +174,11 @@ export function MyPage() {
 
                         {/* Created At */}
                         <div>
-                            <label className="block text-sm mb-2 text-gray-700 flex items-center gap-2">
+                            <label className="mb-2 block flex items-center gap-2 text-sm text-gray-700">
                                 <Calendar className="size-4 text-gray-500" />
                                 가입일
                             </label>
-                            <div className="px-4 py-3 bg-gray-50 rounded-lg text-gray-500">
+                            <div className="rounded-lg bg-gray-50 px-4 py-3 text-gray-500">
                                 {formatDate(user.createdAt)}
                             </div>
                         </div>
@@ -186,17 +186,17 @@ export function MyPage() {
                 </div>
 
                 {/* Stats Card */}
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-white rounded-xl shadow p-6 text-center">
-                        <div className="text-3xl mb-2">0</div>
+                <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <div className="rounded-xl bg-white p-6 text-center shadow">
+                        <div className="mb-2 text-3xl">0</div>
                         <div className="text-sm text-gray-600">작성한 리뷰</div>
                     </div>
-                    <div className="bg-white rounded-xl shadow p-6 text-center">
-                        <div className="text-3xl mb-2">0</div>
+                    <div className="rounded-xl bg-white p-6 text-center shadow">
+                        <div className="mb-2 text-3xl">0</div>
                         <div className="text-sm text-gray-600">저장한 장소</div>
                     </div>
-                    <div className="bg-white rounded-xl shadow p-6 text-center">
-                        <div className="text-3xl mb-2">0</div>
+                    <div className="rounded-xl bg-white p-6 text-center shadow">
+                        <div className="mb-2 text-3xl">0</div>
                         <div className="text-sm text-gray-600">도움이 된 리뷰</div>
                     </div>
                 </div>
@@ -205,7 +205,7 @@ export function MyPage() {
                 <div className="mt-8 text-center">
                     <button
                         onClick={handleLogout}
-                        className="inline-flex items-center gap-2 px-6 py-3 border-2 border-red-200 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="inline-flex items-center gap-2 rounded-lg border-2 border-red-200 px-6 py-3 text-red-600 transition-colors hover:bg-red-50"
                     >
                         <LogOut className="size-5" />
                         <span>로그아웃</span>
