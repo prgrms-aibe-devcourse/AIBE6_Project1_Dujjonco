@@ -41,7 +41,7 @@ class AuthService {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
         if (error) {
-            return { success: false, message: error.message }
+            return { success: false, message: '이메일 또는 비밀번호가 올바르지 않습니다.' }
         }
 
         const user = this.mapSupabaseUser(data.user)
