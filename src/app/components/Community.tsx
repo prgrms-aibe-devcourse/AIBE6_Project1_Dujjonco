@@ -1,4 +1,5 @@
 import { Calendar, MessageCircle, MessageSquare, ThumbsUp, User } from 'lucide-react'
+import type { SubmitEvent } from 'react'
 import { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -43,7 +44,7 @@ export function Community() {
     const [showNewPostForm, setShowNewPostForm] = useState(false)
     const [newPost, setNewPost] = useState({ title: '', content: '' })
 
-    const handleSubmitPost = (e: React.FormEvent) => {
+    const handleSubmitPost = (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault()
         // 실제로는 여기서 게시글을 저장하는 로직이 들어갑니다
         alert('게시글이 작성되었습니다! (실제 저장 기능은 백엔드 연동 시 구현됩니다)')
