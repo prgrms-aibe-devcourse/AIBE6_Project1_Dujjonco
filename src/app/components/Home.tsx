@@ -1,7 +1,7 @@
 import { Accessibility, BookOpen, CircleSlash, DoorOpen, MapPin, ParkingCircle, Users, Volume2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../../lib/supabase'
 import { ImageWithFallback } from './figma/ImageWithFallback'
 
 // ✅ 타입 (DB 기준)

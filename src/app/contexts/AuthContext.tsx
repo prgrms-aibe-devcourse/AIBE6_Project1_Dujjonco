@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import type { User } from '../services/auth'
 import { authService } from '../services/auth'
 
@@ -21,12 +21,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null)
 
     useEffect(() => {
-        const currentUser = authService.getCurrentUser()
-        setUser(currentUser)
+        const initUser = async () => {
+            const currentUser = await authService.getCurrentUser()
+            setUser(currentUser)
+        }
+        initUser()
     }, [])
 
     const login = async (email: string, password: string) => {
-        const result = authService.login(email, password)
+        const result = await authService.login(email, password)
         if (result.success && result.user) {
             setUser(result.user)
         }
@@ -34,12 +37,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const register = async (email: string, password: string, name: string, accessibilityType: string) => {
-        const result = authService.register(email, password, name, accessibilityType)
+        const result = await authService.register(email, password, name, accessibilityType)
         return result
     }
 
-    const logout = () => {
-        authService.logout()
+    const logout = async () => {
+        await authService.logout()
         setUser(null)
     }
 
@@ -47,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!user) {
             return { success: false, message: '로그인이 필요합니다.' }
         }
-        const result = authService.updateUser(user.id, updates)
+        const result = await authService.updateUser(updates)
         if (result.success) {
             setUser({ ...user, ...updates })
         }
