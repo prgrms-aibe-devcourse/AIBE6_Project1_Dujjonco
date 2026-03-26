@@ -71,3 +71,31 @@ export const BARRIER_ICONS = {
 export function getActiveIcons(place: Record<string, string | null>) {
     return Object.entries(BARRIER_ICONS).filter(([key]) => place[key] !== null)
 }
+
+/** 지역 코드를 한글 이름으로 변환하는 객체 */
+export const AreaName: Record<string, string> = {
+    [AreaCode.SEOUL]: '서울',
+    [AreaCode.INCHEON]: '인천',
+    [AreaCode.DAEJEON]: '대전',
+    [AreaCode.DAEGU]: '대구',
+    [AreaCode.GWANGJU]: '광주',
+    [AreaCode.BUSAN]: '부산',
+    [AreaCode.ULSAN]: '울산',
+    [AreaCode.SEJONG]: '세종',
+    [AreaCode.GYEONGGI]: '경기',
+    [AreaCode.GANGWON]: '강원',
+    [AreaCode.CHUNGBUK]: '충북',
+    [AreaCode.CHUNGNAM]: '충남',
+    [AreaCode.GYEONGBUK]: '경북',
+    [AreaCode.GYEONGNAM]: '경남',
+    [AreaCode.JEONBUK]: '전북',
+    [AreaCode.JEONNAM]: '전남',
+    [AreaCode.JEJU]: '제주',
+}
+
+/** 콘텐츠 타입을 한글 이름으로 변환하는 객체 */
+export const ContentTypeName: Record<string, string> = {
+    '12': '관광지',
+    '32': '숙박',
+    '39': '음식점',
+}

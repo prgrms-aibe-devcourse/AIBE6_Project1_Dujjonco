@@ -104,7 +104,7 @@ async function processPage(areaCode: string, typeId: string, pageNo: number) {
 
 /** 4. 메인 실행 함수 (Depth가 획기적으로 줄어듬) */
 async function uploadAllData() {
-    const targetAreas = [AreaCode.JEJU] // 이넘 사용
+    const targetAreas = [AreaCode.JEJU]
     const targetTypes = [ContentType.TOURISM, ContentType.LODGING, ContentType.RESTAURANT]
 
     for (const area of targetAreas) {
