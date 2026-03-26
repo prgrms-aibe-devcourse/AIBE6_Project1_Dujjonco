@@ -1,6 +1,23 @@
 import { supabase } from '@/app/lib/supabase'
 import { uploadPostImages } from './post-images'
 
+export async function fetchPost(id: string) {
+    const { data, error } = await supabase
+        .from('post')
+        .select(
+            `
+            *,
+            post_images (image_url),
+            post_likes (id, user_id),
+            post_comments (id)
+        `,
+        )
+        .eq('id', id)
+        .single()
+
+    if (error) throw error
+    return data
+}
 export async function fetchPosts() {
     const { data, error } = await supabase
         .from('post')
@@ -13,10 +30,10 @@ export async function fetchPosts() {
         `,
         )
         .order('created_at', { ascending: false })
+
     if (error) throw error
     return data
 }
-
 export async function createPost(postData: { title: string; content: string; user_id: string; images?: File[] }) {
     const { data, error } = await supabase
         .from('post')

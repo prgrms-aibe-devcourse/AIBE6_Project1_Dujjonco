@@ -4,14 +4,16 @@ import defaultAvatar from '@/assets/default-avatar.png'
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
 import type { Post } from '@/types'
 import { MessageCircle } from 'lucide-react'
+import { Link } from 'react-router'
 import DeletePostButton from './delete-post-button'
 import EditPostButton from './edit-post-button'
 import LikePostButton from './like-post-button'
-export default function PostItem(post: Post) {
+
+export default function PostItem(post: Post & { isDetail?: boolean }) {
     const { user } = useAuth()
     const isLiked = post.post_likes.some((like) => like.user_id === user?.id)
     return (
-        <div className="flex flex-col gap-4 border-b pb-8">
+        <div className={`flex flex-col gap-4 pb-8 ${!post.isDetail && 'border-b'}`}>
             {/* 1. 유저 정보, 수정/삭제 버튼 */}
             <div className="flex justify-between">
                 {/* 1-1. 유저 정보 */}
@@ -41,8 +43,11 @@ export default function PostItem(post: Post) {
             {/* 2. 컨텐츠, 이미지 캐러셀 */}
             <div className="flex cursor-pointer flex-col gap-5">
                 {/* 2-1. 컨텐츠 */}
-                <div className="line-clamp-2 break-words whitespace-pre-wrap">{post.content}</div>
-
+                <Link to={`/post/${post.id}`}>
+                    <div className={`break-words whitespace-pre-wrap ${post.isDetail ? '' : 'line-clamp-2'}`}>
+                        {post.content}
+                    </div>
+                </Link>
                 {/* 2-2. 이미지 캐러셀 */}
                 <Carousel>
                     <CarouselContent>
@@ -64,10 +69,14 @@ export default function PostItem(post: Post) {
                 {/* 3-1. 좋아요 버튼 */}
                 <LikePostButton id={post.id} likeCount={post.post_likes.length} isLiked={isLiked} />{' '}
                 {/* 3-2. 댓글 버튼 */}
-                <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border-1 p-2 px-4 text-sm">
-                    <MessageCircle className="h-4 w-4" />
-                    <span>댓글 달기</span>
-                </div>
+                {!post.isDetail && (
+                    <Link to={`/post/${post.id}`}>
+                        <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border-1 p-2 px-4 text-sm">
+                            <MessageCircle className="h-4 w-4" />
+                            <span>댓글 달기</span>
+                        </div>
+                    </Link>
+                )}
             </div>
         </div>
     )
