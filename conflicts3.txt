@@ -1,0 +1,8 @@
+﻿package-lock.json
+package.json
+src/app/components/Home.tsx
+src/app/contexts/AuthContext.tsx
+src/app/lib/supabase.ts
+src/app/services/auth.ts
+src/hooks/usePlaces.ts
+vite.config.ts
