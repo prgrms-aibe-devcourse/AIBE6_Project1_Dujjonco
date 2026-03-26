@@ -11,6 +11,7 @@ export function MyPage() {
     const [accessibilityType, setAccessibilityType] = useState(user?.accessibilityType || '일반')
     const [message, setMessage] = useState('')
     const [error, setError] = useState('')
+    const [nickname, setNickname] = useState(user?.nickname || '')
 
     const accessibilityTypes = ['일반', '지체장애', '시각장애', '청각장애', '발달장애', '기타']
 
@@ -22,15 +23,20 @@ export function MyPage() {
     const handleSave = async () => {
         setError('')
         setMessage('')
+        //예외발생
+        try {
+            const result = await updateProfile({ name, nickname, accessibilityType })
 
-        const result = await updateProfile({ name, accessibilityType })
-
-        if (result.success) {
-            setMessage(result.message)
-            setIsEditing(false)
-            setTimeout(() => setMessage(''), 3000)
-        } else {
-            setError(result.message)
+            if (result.success) {
+                setMessage(result.message)
+                setIsEditing(false)
+                setTimeout(() => setMessage(''), 3000)
+            } else {
+                setError(result.message)
+            }
+        } catch (err) {
+            console.error(err)
+            setError('저장 중 오류가 발생했습니다.')
         }
     }
 
@@ -103,6 +109,7 @@ export function MyPage() {
                                         onClick={() => {
                                             setIsEditing(false)
                                             setName(user.name)
+                                            setNickname(user.nickname)
                                             setAccessibilityType(user.accessibilityType)
                                         }}
                                         className="flex items-center gap-2 rounded-lg bg-white/20 px-4 py-2 transition-colors hover:bg-white/30"
@@ -123,15 +130,24 @@ export function MyPage() {
                                 <User className="size-4 text-gray-500" />
                                 이름
                             </label>
+                            <div className="rounded-lg bg-gray-50 px-4 py-3">{user.name}</div>
+                        </div>
+                        {/* Nickname */}
+                        <div>
+                            <label className="mb-2 block flex items-center gap-2 text-sm text-gray-700">
+                                <User className="size-4 text-gray-500" />
+                                닉네임
+                            </label>
                             {isEditing ? (
                                 <input
                                     type="text"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
+                                    value={nickname}
+                                    onChange={(e) => setNickname(e.target.value)}
+                                    placeholder="한글 2~8자 또는 영문/숫자 2~14자"
                                     className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                                 />
                             ) : (
-                                <div className="rounded-lg bg-gray-50 px-4 py-3">{user.name}</div>
+                                <div className="rounded-lg bg-gray-50 px-4 py-3">{user.nickname}</div>
                             )}
                         </div>
 

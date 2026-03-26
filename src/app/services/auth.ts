@@ -4,6 +4,7 @@ export interface User {
     id: string
     email: string
     name: string
+    nickname: string
     accessibilityType: string
     createdAt: string
 }
@@ -13,13 +14,14 @@ class AuthService {
         email: string,
         password: string,
         name: string,
+        nickname: string,
         accessibilityType: string,
     ): Promise<{ success: boolean; message: string }> {
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
             options: {
-                data: { name, accessibilityType },
+                data: { name, nickname, accessibilityType },
             },
         })
 
@@ -41,6 +43,7 @@ class AuthService {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
         if (error) {
+            await supabase.auth.signOut({ scope: 'local' })
             return { success: false, message: '이메일 또는 비밀번호가 올바르지 않습니다.' }
         }
 
@@ -63,6 +66,7 @@ class AuthService {
         const { error } = await supabase.auth.updateUser({
             data: {
                 name: updates.name,
+                nickname: updates.nickname,
                 accessibilityType: updates.accessibilityType,
             },
         })
@@ -84,6 +88,7 @@ class AuthService {
             id: user.id,
             email: user.email ?? '',
             name: user.user_metadata?.name ?? '',
+            nickname: user.user_metadata?.nickname ?? '',
             accessibilityType: user.user_metadata?.accessibilityType ?? '일반',
             createdAt: user.created_at ?? new Date().toISOString(),
         }

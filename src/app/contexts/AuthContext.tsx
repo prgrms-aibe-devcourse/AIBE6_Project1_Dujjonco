@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { User } from '../services/auth'
 import { authService } from '../services/auth'
@@ -11,6 +11,7 @@ interface AuthContextType {
         email: string,
         password: string,
         name: string,
+        nickname: string,
         accessibilityType: string,
     ) => Promise<{ success: boolean; message: string }>
     logout: () => void
@@ -29,7 +30,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Supabase 인증 상태 변화 감지
         const {
             data: { subscription },
-        } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'USER_UPDATED') return
             if (session?.user) {
                 const user = await authService.getCurrentUser()
                 setUser(user)
@@ -49,8 +51,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return result
     }
 
-    const register = async (email: string, password: string, name: string, accessibilityType: string) => {
-        const result = await authService.register(email, password, name, accessibilityType)
+    const register = async (
+        email: string,
+        password: string,
+        name: string,
+        nickname: string,
+        accessibilityType: string,
+    ) => {
+        const result = await authService.register(email, password, name, nickname, accessibilityType)
         return result
     }
 

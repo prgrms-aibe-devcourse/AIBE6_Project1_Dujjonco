@@ -9,6 +9,7 @@ export function Register() {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [name, setName] = useState('')
+    const [nickname, setNickname] = useState('')
     const [accessibilityType, setAccessibilityType] = useState('일반')
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
@@ -31,9 +32,15 @@ export function Register() {
             return
         }
 
+        const nicknameRegex = /^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣]{2,10}$/
+        if (!nicknameRegex.test(nickname)) {
+            setError('닉네임은 한글, 숫자, 영문 혼합 10자이내로 입력해주세요.')
+            return
+        }
+
         setLoading(true)
 
-        const result = await register(email, password, name, accessibilityType)
+        const result = await register(email, password, name, nickname, accessibilityType)
 
         if (result.success) {
             navigate('/login', { state: { message: '회원가입이 완료되었습니다. 로그인해주세요.' } })
@@ -79,6 +86,21 @@ export function Register() {
                                     onChange={(e) => setName(e.target.value)}
                                     className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                                     placeholder="홍길동"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-sm text-gray-700">닉네임</label>
+                            <div className="relative">
+                                <User className="absolute top-1/2 left-3 size-5 -translate-y-1/2 text-gray-400" />
+                                <input
+                                    type="text"
+                                    value={nickname}
+                                    onChange={(e) => setNickname(e.target.value)}
+                                    className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                    placeholder="한글 2~8자 또는 영문/숫자 2~14자"
                                     required
                                 />
                             </div>
