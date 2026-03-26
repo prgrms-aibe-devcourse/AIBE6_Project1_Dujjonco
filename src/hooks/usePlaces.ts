@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../app/lib/supabase'
+import { AreaCode, ContentType } from '../../constants/api-codes'
 
 // 필터 타입 정의
 interface Filters {
@@ -9,6 +10,7 @@ interface Filters {
   elevator: boolean
   restroom: boolean
   parking: boolean
+  sortType: 'latest' | 'rating'
 }
 
 // 장소 타입 정의
@@ -16,6 +18,7 @@ interface Place {
   content_id: string
   title: string
   address: string
+  area_code: string
   content_type: string
   image_url: string
   wheelchair: string | null
@@ -27,16 +30,23 @@ interface Place {
   signguide: string | null
 }
 
-export function usePlaces(filters: Filters) {
+const ITEMS_PER_PAGE = 20
+
+export function usePlaces(filters: Filters, page: number = 1) {
   const [places, setPlaces] = useState<Place[]>([])
   const [loading, setLoading] = useState(true)
+  const [totalCount, setTotalCount] = useState(0)
 
+  const filtersKey = JSON.stringify(filters)
   useEffect(() => {
-    fetchPlaces()
-  }, [filters])
+  fetchPlaces()
+}, [filtersKey, page])
 
   async function fetchPlaces() {
     setLoading(true)
+
+    const from = (page - 1) * ITEMS_PER_PAGE
+    const to = from + ITEMS_PER_PAGE - 1
 
     let query = supabase
       .from('places')
@@ -44,6 +54,7 @@ export function usePlaces(filters: Filters) {
         content_id,
         title,
         address,
+        area_code,
         content_type,
         image_url,
         wheelchair,
@@ -53,11 +64,11 @@ export function usePlaces(filters: Filters) {
         braileblock,
         audioguide,
         signguide
-      `)
+      `, { count: 'exact' })
 
-    // 지역 필터
+    // 지역 필터 (area_code로 검색)
     if (filters.location && filters.location !== '전체') {
-      query = query.like('address', `%${filters.location}%`)
+      query = query.eq('area_code', filters.location)
     }
 
     // 업종 필터
@@ -71,13 +82,25 @@ export function usePlaces(filters: Filters) {
     if (filters.restroom)   query = query.not('restroom', 'is', null)
     if (filters.parking)    query = query.not('parking', 'is', null)
 
-    const { data, error } = await query
+    // 정렬
+    if (filters.sortType === 'latest') {
+      query = query.order('created_at', { ascending: false })
+    }
+    // 평점순은 reviews 데이터 쌓인 후 추가 예정
+
+    // 페이지네이션
+    const { data, error, count } = await query.range(from, to)
 
     if (error) console.error(error)
-    else setPlaces(data as Place[])
+    else {
+      setPlaces(data as Place[])
+      setTotalCount(count ?? 0)
+    }
 
     setLoading(false)
   }
 
-  return { places, loading }
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE)
+
+  return { places, loading, totalCount, totalPages }
 }
