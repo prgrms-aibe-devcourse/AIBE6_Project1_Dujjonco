@@ -47,7 +47,7 @@ class AuthService {
             return { success: false, message: '이메일 또는 비밀번호가 올바르지 않습니다.' }
         }
 
-        const user = this.mapSupabaseUser(data.user)
+        const user = this.mapUser(data.user)
         return { success: true, message: '로그인되었습니다.', user }
     }
 
@@ -59,7 +59,7 @@ class AuthService {
         const {
             data: { user },
         } = await supabase.auth.getUser()
-        return user ? this.mapSupabaseUser(user) : null
+        return user ? this.mapUser(user) : null
     }
 
     async updateUser(_userId: string, updates: Partial<User>): Promise<{ success: boolean; message: string }> {
@@ -78,7 +78,7 @@ class AuthService {
         return { success: true, message: '프로필이 업데이트되었습니다.' }
     }
 
-    private mapSupabaseUser(user: {
+    mapUser(user: {
         id: string
         email?: string
         user_metadata?: Record<string, string>
