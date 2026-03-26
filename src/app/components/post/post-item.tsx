@@ -1,11 +1,11 @@
 import { useAuth } from '@/app/contexts/AuthContext'
 import { formatTimeAgo } from '@/app/lib/time'
 import defaultAvatar from '@/assets/default-avatar.png'
-import { Button } from '@/components/ui/button'
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
 import type { Post } from '@/types'
 import { HeartIcon, MessageCircle } from 'lucide-react'
-import EditPostItemButton from './edit-post-item-button'
+import DeletePostButton from './delete-post-button'
+import EditPostButton from './edit-post-button'
 export default function PostItem(post: Post) {
     const { user } = useAuth()
 
@@ -31,10 +31,8 @@ export default function PostItem(post: Post) {
                 {/* 1-2. 수정/삭제 버튼 */}
                 {post.user_id === user?.id && (
                     <div className="text-muted-foreground flex text-sm">
-                        <EditPostItemButton post={post} />
-                        <Button className="cursor-pointer" variant={'ghost'}>
-                            삭제
-                        </Button>
+                        <EditPostButton post={post} />
+                        <DeletePostButton id={post.id} />
                     </div>
                 )}
             </div>
