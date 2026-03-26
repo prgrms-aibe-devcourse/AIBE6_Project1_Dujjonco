@@ -1,10 +1,10 @@
 import { useAuth } from '@/app/contexts/AuthContext'
+import { formatTimeAgo } from '@/app/lib/time'
 import defaultAvatar from '@/assets/default-avatar.png'
 import { Button } from '@/components/ui/button'
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
 import type { Post } from '@/types'
 import { HeartIcon, MessageCircle } from 'lucide-react'
-
 export default function PostItem(post: Post) {
     const { user } = useAuth()
 
@@ -21,9 +21,7 @@ export default function PostItem(post: Post) {
                     />
                     <div>
                         <div className="font-bold hover:underline">{user?.nickname ?? '알 수 없음'}</div>
-                        <div className="text-muted-foreground text-sm">
-                            {post.created_at ? new Date(post.created_at).toLocaleString() : ''}
-                        </div>
+                        <div className="text-muted-foreground text-sm">{formatTimeAgo(post.created_at!)}</div>
                     </div>
                 </div>
 
