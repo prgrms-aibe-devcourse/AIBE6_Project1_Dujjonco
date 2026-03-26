@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-=======
 import { createContext, useContext, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { supabase } from '../lib/supabase'
->>>>>>> upstream/develop
 import type { User } from '../services/auth'
 import { authService } from '../services/auth'
 
@@ -27,13 +23,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null)
 
     useEffect(() => {
-<<<<<<< HEAD
-        const initUser = async () => {
-            const currentUser = await authService.getCurrentUser()
-            setUser(currentUser)
-        }
-        initUser()
-=======
         // 초기 세션 로드
         authService.getCurrentUser().then(setUser)
 
@@ -50,7 +39,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })
 
         return () => subscription.unsubscribe()
->>>>>>> upstream/develop
     }, [])
 
     const login = async (email: string, password: string) => {
@@ -75,11 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!user) {
             return { success: false, message: '로그인이 필요합니다.' }
         }
-<<<<<<< HEAD
-        const result = await authService.updateUser(updates)
-=======
         const result = await authService.updateUser(user.id, updates)
->>>>>>> upstream/develop
         if (result.success) {
             setUser({ ...user, ...updates })
         }
