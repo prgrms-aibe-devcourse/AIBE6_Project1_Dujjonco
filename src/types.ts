@@ -7,7 +7,7 @@ export type PostCommentEntity = Database['public']['Tables']['post_comments']['R
 
 export type Post = PostEntity & {
     post_images: Pick<PostImageEntity, 'image_url'>[]
-    post_likes: Pick<PostLikeEntity, 'id'>[]
+    post_likes: Pick<PostLikeEntity, 'id' | 'user_id'>[]
     post_comments: Pick<PostCommentEntity, 'id'>[]
 }
 

@@ -6,11 +6,11 @@ export async function fetchPosts() {
         .from('post')
         .select(
             `
-        *,
-        post_images (image_url),
-        post_likes (id),
-        post_comments (id)
-    `,
+            *,
+            post_images (image_url),
+            post_likes (id, user_id),
+            post_comments (id)
+        `,
         )
         .order('created_at', { ascending: false })
     if (error) throw error
