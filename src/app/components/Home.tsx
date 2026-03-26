@@ -3,8 +3,7 @@ import { Link } from "react-router";
 import { MapPin, Heart, Accessibility, DoorOpen, CircleParking, ArrowDownUp } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { usePlaces } from "../../hooks/usePlaces";
-import { getActiveIcons } from "../../constants/barrierIcons";
-import { AreaCode, ContentType } from "../../../constants/api-codes";
+import { AreaCode, ContentType, getActiveIcons } from "../../../constants/api-codes";
 
 // 카테고리 매핑
 const CATEGORY_MAP: Record<string, string> = {
