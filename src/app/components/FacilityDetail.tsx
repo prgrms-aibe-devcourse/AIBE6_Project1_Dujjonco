@@ -2,8 +2,8 @@ import { Accessibility, ArrowLeft, Camera, Heart, MapPin, Phone, Send, Trash2 } 
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { useReviews } from '../../hooks/useReviews'
-import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { supabase } from '../lib/supabase'
 import { ImageWithFallback } from './figma/ImageWithFallback'
 
 interface Facility {
@@ -27,17 +27,23 @@ export function FacilityDetail() {
     const { id } = useParams<{ id: string }>()
     const { user } = useAuth()
     const [sortBy, setSortBy] = useState<'latest' | 'likes'>('latest')
-    const { reviews, loading, averages, addReview, uploadImage, toggleLikeReview, addReply, deleteReview, deleteReply } = useReviews(
-        id || '',
-        user?.id,
-        sortBy,
-    )
+    const {
+        reviews,
+        loading,
+        averages,
+        addReview,
+        uploadImage,
+        toggleLikeReview,
+        addReply,
+        deleteReview,
+        deleteReply,
+    } = useReviews(id || '', user?.id, sortBy)
 
     // UI 상태 관리
     const [facility, setFacility] = useState<Facility | null>(null)
-    const [newReview, setNewReview] = useState('') // 작성 중인 리뷰 텍스트
-    const [selectedImages, setSelectedImages] = useState<File[]>([]) // 선택된 이미지 파일들
-    const [imagePreviews, setImagePreviews] = useState<string[]>([]) // 이미지 미리보기 URL들
+    const [newReview, setNewReview] = useState('')
+    const [selectedImages, setSelectedImages] = useState<File[]>([])
+    const [imagePreviews, setImagePreviews] = useState<string[]>([])
 
     // 별점 상태
     const [ratings, setRatings] = useState({
@@ -46,9 +52,9 @@ export function FacilityDetail() {
         amenities: 5,
     })
 
-    const [isSubmitting, setIsSubmitting] = useState(false) // 업로드/저장 상태
-    const [error, setError] = useState<string | null>(null) // 에러 메시지
-    const [replyInputs, setReplyInputs] = useState<{ [key: string]: string }>({}) // 답글 입력 상태
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+    const [replyInputs, setReplyInputs] = useState<{ [key: string]: string }>({})
 
     const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -137,7 +143,7 @@ export function FacilityDetail() {
         }
     }
 
-    // 리뷰 삭제 핸들러]
+    // 리뷰 삭제 핸들러
     const handleDeleteReview = async (reviewId: string) => {
         if (!user || !window.confirm('리뷰를 삭제하시겠습니까?')) return
         await deleteReview(reviewId, user.id)
@@ -418,11 +424,13 @@ export function FacilityDetail() {
                             <div key={review.id} className="space-y-3 border-b border-gray-100 pb-6 last:border-0">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
-                                        <span className="font-bold text-gray-800">사용자 {review.user_id.slice(0, 4)}</span>
+                                        <span className="font-bold text-gray-800">
+                                            사용자 {review.user_id.slice(0, 4)}
+                                        </span>
                                         {user?.id === review.user_id && (
                                             <button
                                                 onClick={() => handleDeleteReview(review.id)}
-                                                className="text-gray-300 hover:text-red-500 transition-colors"
+                                                className="text-gray-300 transition-colors hover:text-red-500"
                                                 title="리뷰 삭제"
                                             >
                                                 <Trash2 className="size-3.5" />
@@ -520,7 +528,7 @@ export function FacilityDetail() {
                                                         {user?.id === reply.user_id && (
                                                             <button
                                                                 onClick={() => handleDeleteReply(reply.id)}
-                                                                className="text-gray-300 hover:text-red-500 transition-colors"
+                                                                className="text-gray-300 transition-colors hover:text-red-500"
                                                                 title="답글 삭제"
                                                             >
                                                                 <Trash2 className="size-3" />
