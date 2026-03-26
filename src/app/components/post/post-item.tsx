@@ -1,0 +1,66 @@
+import { Button } from '@/components/ui/button'
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
+import type { Post } from '@/types'
+import { HeartIcon, MessageCircle } from 'lucide-react'
+
+export default function PostItem(post: Post) {
+    return (
+        <div className="flex flex-col gap-4 border-b pb-8">
+            {/* 1. 유저 정보, 수정/삭제 버튼 */}
+            <div className="flex justify-between">
+                {/* 1-1. 유저 정보 (profiles 테이블 연동 전 임시) */}
+                <div className="text-muted-foreground text-sm">
+                    {post.created_at ? new Date(post.created_at).toLocaleString() : ''}
+                </div>
+
+                {/* 1-2. 수정/삭제 버튼 */}
+                <div className="text-muted-foreground flex text-sm">
+                    <Button className="cursor-pointer" variant={'ghost'}>
+                        수정
+                    </Button>
+                    <Button className="cursor-pointer" variant={'ghost'}>
+                        삭제
+                    </Button>
+                </div>
+            </div>
+
+            {/* 2. 컨텐츠, 이미지 캐러셀 */}
+            <div className="flex cursor-pointer flex-col gap-5">
+                {/* 2-1. 컨텐츠 */}
+                <div className="line-clamp-2 break-words whitespace-pre-wrap">{post.content}</div>
+
+                {/* 2-2. 이미지 캐러셀 */}
+                {post.post_images.length > 0 && (
+                    <Carousel>
+                        <CarouselContent>
+                            {post.post_images.map((image, index) =>
+                                image.image_url?.map((url, urlIndex) => (
+                                    <CarouselItem className="basis-3/5" key={`${index}-${urlIndex}`}>
+                                        <div className="overflow-hidden rounded-xl">
+                                            <img src={url} className="h-full max-h-[350px] w-full object-cover" />
+                                        </div>
+                                    </CarouselItem>
+                                )),
+                            )}
+                        </CarouselContent>
+                    </Carousel>
+                )}
+            </div>
+
+            {/* 3. 좋아요, 댓글 버튼 */}
+            <div className="flex gap-2">
+                {/* 3-1. 좋아요 버튼 */}
+                <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border-1 p-2 px-4 text-sm">
+                    <HeartIcon className="h-4 w-4" />
+                    <span>{post.post_likes.length}</span>
+                </div>
+
+                {/* 3-2. 댓글 버튼 */}
+                <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border-1 p-2 px-4 text-sm">
+                    <MessageCircle className="h-4 w-4" />
+                    <span>댓글 달기</span>
+                </div>
+            </div>
+        </div>
+    )
+}

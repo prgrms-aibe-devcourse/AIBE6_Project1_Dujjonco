@@ -43,6 +43,7 @@ export default function PostEditorModal() {
             title: content.slice(0, 20),
             content: content,
             user_id: user.id,
+            images: images.map((img) => img.file),
         })
     }
     const handleSelectImages = (e: ChangeEvent<HTMLInputElement>) => {
