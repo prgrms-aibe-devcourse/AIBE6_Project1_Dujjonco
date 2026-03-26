@@ -4,6 +4,7 @@ export interface User {
     id: string
     email: string
     name: string
+    nickname: string
     accessibilityType: string
     createdAt: string
 }
@@ -13,13 +14,14 @@ class AuthService {
         email: string,
         password: string,
         name: string,
+        nickname: string,
         accessibilityType: string,
     ): Promise<{ success: boolean; message: string }> {
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
             options: {
-                data: { name, accessibilityType },
+                data: { name, nickname, accessibilityType },
             },
         })
 
@@ -41,10 +43,11 @@ class AuthService {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
         if (error) {
+            await supabase.auth.signOut({ scope: 'local' })
             return { success: false, message: '이메일 또는 비밀번호가 올바르지 않습니다.' }
         }
 
-        const user = this.mapSupabaseUser(data.user)
+        const user = this.mapUser(data.user)
         return { success: true, message: '로그인되었습니다.', user }
     }
 
@@ -56,13 +59,14 @@ class AuthService {
         const {
             data: { user },
         } = await supabase.auth.getUser()
-        return user ? this.mapSupabaseUser(user) : null
+        return user ? this.mapUser(user) : null
     }
 
     async updateUser(_userId: string, updates: Partial<User>): Promise<{ success: boolean; message: string }> {
         const { error } = await supabase.auth.updateUser({
             data: {
                 name: updates.name,
+                nickname: updates.nickname,
                 accessibilityType: updates.accessibilityType,
             },
         })
@@ -74,7 +78,7 @@ class AuthService {
         return { success: true, message: '프로필이 업데이트되었습니다.' }
     }
 
-    private mapSupabaseUser(user: {
+    mapUser(user: {
         id: string
         email?: string
         user_metadata?: Record<string, string>
@@ -84,6 +88,7 @@ class AuthService {
             id: user.id,
             email: user.email ?? '',
             name: user.user_metadata?.name ?? '',
+            nickname: user.user_metadata?.nickname ?? '',
             accessibilityType: user.user_metadata?.accessibilityType ?? '일반',
             createdAt: user.created_at ?? new Date().toISOString(),
         }

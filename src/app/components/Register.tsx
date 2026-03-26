@@ -1,4 +1,5 @@
 import { Accessibility, Lock, Mail, User } from 'lucide-react'
+import type { SubmitEvent } from 'react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
@@ -8,6 +9,7 @@ export function Register() {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [name, setName] = useState('')
+    const [nickname, setNickname] = useState('')
     const [accessibilityType, setAccessibilityType] = useState('일반')
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
@@ -16,7 +18,7 @@ export function Register() {
 
     const accessibilityTypes = ['일반', '지체장애', '시각장애', '청각장애', '발달장애', '기타']
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault()
         setError('')
 
@@ -30,9 +32,15 @@ export function Register() {
             return
         }
 
+        const nicknameRegex = /^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣]{2,10}$/
+        if (!nicknameRegex.test(nickname)) {
+            setError('닉네임은 한글, 숫자, 영문 혼합 10자이내로 입력해주세요.')
+            return
+        }
+
         setLoading(true)
 
-        const result = await register(email, password, name, accessibilityType)
+        const result = await register(email, password, name, nickname, accessibilityType)
 
         if (result.success) {
             navigate('/login', { state: { message: '회원가입이 완료되었습니다. 로그인해주세요.' } })
@@ -44,39 +52,39 @@ export function Register() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center px-4 py-12">
-            <div className="max-w-md w-full">
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 px-4 py-12">
+            <div className="w-full max-w-md">
                 {/* Logo */}
-                <div className="text-center mb-8">
+                <div className="mb-8 text-center">
                     <Link to="/" className="inline-block">
-                        <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-4 rounded-2xl inline-block mb-4">
+                        <div className="mb-4 inline-block rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 p-4">
                             <Accessibility className="size-12 text-white" />
                         </div>
                     </Link>
-                    <h1 className="text-3xl mb-2">배리어플레이스</h1>
+                    <h1 className="mb-2 text-3xl">배리어플레이스</h1>
                     <p className="text-gray-600">모두를 위한 접근 가능한 공간</p>
                 </div>
 
                 {/* Register Form */}
-                <div className="bg-white rounded-2xl shadow-xl p-8">
-                    <h2 className="text-2xl mb-6 text-center">회원가입</h2>
+                <div className="rounded-2xl bg-white p-8 shadow-xl">
+                    <h2 className="mb-6 text-center text-2xl">회원가입</h2>
 
                     {error && (
-                        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
                             {error}
                         </div>
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div>
-                            <label className="block text-sm mb-2 text-gray-700">이름</label>
+                            <label className="mb-2 block text-sm text-gray-700">이름</label>
                             <div className="relative">
-                                <User className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-gray-400" />
+                                <User className="absolute top-1/2 left-3 size-5 -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                                     placeholder="홍길동"
                                     required
                                 />
@@ -84,14 +92,29 @@ export function Register() {
                         </div>
 
                         <div>
-                            <label className="block text-sm mb-2 text-gray-700">이메일</label>
+                            <label className="mb-2 block text-sm text-gray-700">닉네임</label>
                             <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-gray-400" />
+                                <User className="absolute top-1/2 left-3 size-5 -translate-y-1/2 text-gray-400" />
+                                <input
+                                    type="text"
+                                    value={nickname}
+                                    onChange={(e) => setNickname(e.target.value)}
+                                    className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                    placeholder="한글 2~8자 또는 영문/숫자 2~14자"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-sm text-gray-700">이메일</label>
+                            <div className="relative">
+                                <Mail className="absolute top-1/2 left-3 size-5 -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                                     placeholder="your@email.com"
                                     required
                                 />
@@ -99,14 +122,14 @@ export function Register() {
                         </div>
 
                         <div>
-                            <label className="block text-sm mb-2 text-gray-700">비밀번호</label>
+                            <label className="mb-2 block text-sm text-gray-700">비밀번호</label>
                             <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-gray-400" />
+                                <Lock className="absolute top-1/2 left-3 size-5 -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                                     placeholder="최소 6자 이상"
                                     required
                                 />
@@ -114,14 +137,14 @@ export function Register() {
                         </div>
 
                         <div>
-                            <label className="block text-sm mb-2 text-gray-700">비밀번호 확인</label>
+                            <label className="mb-2 block text-sm text-gray-700">비밀번호 확인</label>
                             <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-gray-400" />
+                                <Lock className="absolute top-1/2 left-3 size-5 -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="password"
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                                     placeholder="비밀번호 재입력"
                                     required
                                 />
@@ -129,13 +152,13 @@ export function Register() {
                         </div>
 
                         <div>
-                            <label className="block text-sm mb-2 text-gray-700">접근성 유형</label>
+                            <label className="mb-2 block text-sm text-gray-700">접근성 유형</label>
                             <div className="relative">
-                                <Accessibility className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-gray-400" />
+                                <Accessibility className="absolute top-1/2 left-3 size-5 -translate-y-1/2 text-gray-400" />
                                 <select
                                     value={accessibilityType}
                                     onChange={(e) => setAccessibilityType(e.target.value)}
-                                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                                    className="w-full appearance-none rounded-lg border border-gray-300 bg-white py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                                     required
                                 >
                                     {accessibilityTypes.map((type) => (
@@ -145,13 +168,13 @@ export function Register() {
                                     ))}
                                 </select>
                             </div>
-                            <p className="text-xs text-gray-500 mt-1">맞춤형 추천을 위해 선택해주세요 (선택사항)</p>
+                            <p className="mt-1 text-xs text-gray-500">맞춤형 추천을 위해 선택해주세요 (선택사항)</p>
                         </div>
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 py-3 text-white transition-all hover:from-blue-600 hover:to-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {loading ? '가입 중...' : '회원가입'}
                         </button>
@@ -160,7 +183,7 @@ export function Register() {
                     <div className="mt-6 text-center">
                         <p className="text-gray-600">
                             이미 계정이 있으신가요?{' '}
-                            <Link to="/login" className="text-blue-600 hover:text-blue-700 font-semibold">
+                            <Link to="/login" className="font-semibold text-blue-600 hover:text-blue-700">
                                 로그인
                             </Link>
                         </p>
