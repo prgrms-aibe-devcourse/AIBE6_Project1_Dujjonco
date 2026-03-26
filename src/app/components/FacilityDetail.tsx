@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { useReviews } from '../../hooks/useReviews'
 import { useAuth } from '../contexts/AuthContext'
+import { AssistType, ContentType } from '../../../constants/api-codes'
 import { supabase } from '../lib/supabase'
 import { ImageWithFallback } from './figma/ImageWithFallback'
 
@@ -11,16 +12,41 @@ interface Facility {
     content_type: string
     title: string
     address: string
-    addr2?: string
-    tel?: string
-    lat?: number
-    lng?: number
-    image_url?: string
-    image_url2?: string
+    addr2?: string | null
+    tel?: string | null
+    lat?: number | null
+    lng?: number | null
+    image_url?: string | null
+    image_url2?: string | null
 
-    parking?: string
-    wheelchair?: string
-    restroom?: string
+    parking?: string | null
+    publictransport?: string | null
+    route?: string | null
+    ticketoffice?: string | null
+    promotion?: string | null
+    wheelchair?: string | null
+    exit?: string | null
+    elevator?: string | null
+    restroom?: string | null
+    auditorium?: string | null
+    room?: string | null
+    handicapetc?: string | null
+    braileblock?: string | null
+    helpdog?: string | null
+    guidehuman?: string | null
+    audioguide?: string | null
+    bigprint?: string | null
+    brailepromotion?: string | null
+    guidesystem?: string | null
+    blindhandicapetc?: string | null
+    signguide?: string | null
+    videoguide?: string | null
+    hearingroom?: string | null
+    hearinghandicapetc?: string | null
+    stroller?: string | null
+    lactationroom?: string | null
+    babysparechair?: string | null
+    infantsfamilyetc?: string | null
 }
 
 export function FacilityDetail() {
@@ -59,7 +85,9 @@ export function FacilityDetail() {
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
-        if (id) fetchFacility()
+        if (id) {
+            fetchFacility()
+        }
     }, [id])
 
     //장소 정보를 가져옵니다.
@@ -68,9 +96,10 @@ export function FacilityDetail() {
 
         if (error) {
             console.error(error)
-        } else {
-            setFacility(data)
+            return
         }
+
+        setFacility(data)
     }
 
     //이미지 선택 시 미리보기를 생성하고 상태에 저장합니다.
@@ -193,6 +222,21 @@ export function FacilityDetail() {
         return <div className="py-12 text-center">로딩중...</div>
     }
 
+    // content_type 숫자코드 -> 한글
+    const contentTypeLabelMap: Record<string, string> = {
+        [ContentType.TOURISM]: '관광지',
+        [ContentType.LODGING]: '숙박',
+        [ContentType.RESTAURANT]: '음식점',
+    }
+
+    const contentTypeLabel = contentTypeLabelMap[facility.content_type] ?? facility.content_type
+
+    // AssistType 기준으로 값 있는 편의시설만 추출
+    const activeAssistTypes = Object.entries(AssistType).filter(([key]) => {
+        const value = facility[key as keyof Facility]
+        return value !== null && value !== undefined && value !== ''
+    })
+
     return (
         <div className="space-y-6 pb-20">
             {/* 뒤로가기 */}
@@ -214,7 +258,7 @@ export function FacilityDetail() {
 
                     <div className="absolute right-0 bottom-0 left-0 p-8 text-white">
                         <h1 className="mb-2 text-4xl">{facility.title}</h1>
-                        <p className="opacity-90">{facility.content_type}</p>
+                        <p className="opacity-90">{contentTypeLabel}</p>
                     </div>
                 </div>
 
@@ -224,7 +268,10 @@ export function FacilityDetail() {
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div className="flex items-center gap-3">
                             <MapPin className="size-5 text-blue-600" />
-                            <p>{facility.address}</p>
+                            <p>
+                                {facility.address}
+                                {facility.addr2 ? ` ${facility.addr2}` : ''}
+                            </p>
                         </div>
 
                         {facility.tel && (
@@ -243,16 +290,14 @@ export function FacilityDetail() {
                         </h2>
 
                         <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-                            {facility.wheelchair && <div className="rounded-lg bg-blue-50 p-3">휠체어 접근 가능</div>}
-
-                            {facility.parking && <div className="rounded-lg bg-blue-50 p-3">장애인 주차 가능</div>}
-
-                            {facility.restroom && <div className="rounded-lg bg-blue-50 p-3">장애인 화장실</div>}
+                            {activeAssistTypes.map(([key, label]) => (
+                                <div key={key} className="rounded-lg bg-blue-50 p-3">
+                                    {label}
+                                </div>
+                            ))}
                         </div>
 
-                        {!facility.wheelchair && !facility.parking && !facility.restroom && (
-                            <p className="text-gray-400">등록된 편의시설 정보 없음</p>
-                        )}
+                        {activeAssistTypes.length === 0 && <p className="text-gray-400">등록된 편의시설 정보 없음</p>}
                     </div>
                 </div>
             </div>
