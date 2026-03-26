@@ -212,15 +212,20 @@ class ReviewsService {
    * 리뷰용 이미지를 Supabase Storage에 업로드하고 공용 URL을 반환합니다.
    */
   async uploadReviewImage(file: File): Promise<{ url?: string; error?: string }> {
-    const fileExt = file.name.split('.').pop()
-    const fileName = `${Math.random()}.${fileExt}`
+    const fileExt = file.name.split('.').pop()?.toLowerCase() || 'png'
+    // 중복 방지를 위해 타임스탬프와 랜덤 문자열을 조합한 파일명을 사용합니다.
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 10)}.${fileExt}`
     
-    // 버킷 이름 확인: 'review-images' 또는 'review_images'
-    const BUCKET_NAME = 'review-images'
+    // [Antigravity]: 400 에러 해결을 위해 버킷 이름을 'review_images'로 수정하고 
+    // contentType 옵션을 추가했습니다.
+    const BUCKET_NAME = 'review_images'
 
     const { error: uploadError } = await supabase.storage
       .from(BUCKET_NAME)
-      .upload(fileName, file)
+      .upload(fileName, file, {
+        contentType: file.type,
+        upsert: true
+      })
 
     if (uploadError) return { error: uploadError.message }
 

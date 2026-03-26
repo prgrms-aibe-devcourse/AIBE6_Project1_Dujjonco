@@ -126,9 +126,7 @@ export function FacilityDetail() {
         }
     }
 
-    /**
-     * 답글 제출 핸들러
-     */
+    //  답글 제출 핸들러
     const handleSubmitReply = async (reviewId: string) => {
         const content = replyInputs[reviewId]
         if (!content?.trim() || !user) return
@@ -139,17 +137,13 @@ export function FacilityDetail() {
         }
     }
 
-    /**
-     * [리뷰 삭제 핸들러]
-     */
+    // 리뷰 삭제 핸들러]
     const handleDeleteReview = async (reviewId: string) => {
         if (!user || !window.confirm('리뷰를 삭제하시겠습니까?')) return
         await deleteReview(reviewId, user.id)
     }
 
-    /**
-     * [답글 삭제 핸들러]
-     */
+    // 답글 삭제 핸들러
     const handleDeleteReply = async (replyId: string) => {
         if (!user || !window.confirm('답글을 삭제하시겠습니까?')) return
         await deleteReply(replyId, user.id)
@@ -300,9 +294,8 @@ export function FacilityDetail() {
                                 value={newReview}
                                 onChange={(e) => setNewReview(e.target.value)}
                                 onKeyDown={(e) => {
-                                    // 엔터 키를 누르고, Shift 키가 눌리지 않았으며, IME 조합 중이 아닐 때 제출합니다.
                                     if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
-                                        e.preventDefault() // 줄바꿈 방지
+                                        e.preventDefault()
                                         handleSubmitReview(e)
                                     }
                                 }}
@@ -550,7 +543,6 @@ export function FacilityDetail() {
                                                     setReplyInputs((prev) => ({ ...prev, [review.id]: e.target.value }))
                                                 }
                                                 onKeyDown={(e) => {
-                                                    // 엔터 키를 누르고, 한글 입력기(IME) 조합 중이 아닐 때 제출합니다.
                                                     if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
                                                         handleSubmitReply(review.id)
                                                     }
