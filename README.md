@@ -8,4 +8,5 @@
   Run `npm i` to install the dependencies.
 
   Run `npm run dev` to start the development server.
-  
+
+  Run `npx ts-node scripts/upload-data.ts` to call data from api and load to supabase
