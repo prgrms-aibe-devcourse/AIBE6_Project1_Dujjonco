@@ -26,6 +26,8 @@ export interface ReviewReply {
   user_id: string
   content: string
   created_at: string
+  likes: number
+  is_liked?: boolean
 }
 
 /**
@@ -68,7 +70,10 @@ class ReviewsService {
     const reviewIds = data.map((r: any) => r.id)
     const { data: repliesData, error: repliesError } = await supabase
       .from('review_comments')
-      .select('*')
+      .select(`
+        *,
+        review_comment_likes (user_id)
+      `)
       .in('review_id', reviewIds)
       .order('created_at', { ascending: true })
 
@@ -79,7 +84,11 @@ class ReviewsService {
     // 3. 리뷰 데이터 매핑 및 답글 병합
     // [Antigravity]: 가져온 답글들을 각 리뷰의 id와 매칭하여 replies 배열에 넣어줍니다.
     const reviews = data.map((item: any) => {
-      const reviewReplies = repliesData?.filter((reply: any) => reply.review_id === item.id) || []
+      const reviewReplies = repliesData?.map((reply: any) => ({
+        ...reply,
+        likes: reply.review_comment_likes?.length || 0,
+        is_liked: currentUserId ? reply.review_comment_likes?.some((like: any) => like.user_id === currentUserId) : false
+      })).filter((reply: any) => reply.review_id === item.id) || []
       
       return {
         ...item,
@@ -266,6 +275,32 @@ class ReviewsService {
       .eq('user_id', userId)
 
     if (error) return { success: false, error: error.message }
+    return { success: true }
+  }
+
+  /**
+   * 댓글 좋아요 토글
+   */
+  async toggleCommentLike(commentId: string, userId: string): Promise<{ success: boolean; error?: string }> {
+    const { data: existingLike } = await supabase
+      .from('review_comment_likes')
+      .select('id')
+      .eq('comment_id', commentId)
+      .eq('user_id', userId)
+      .single()
+
+    if (existingLike) {
+      const { error } = await supabase
+        .from('review_comment_likes')
+        .delete()
+        .eq('id', existingLike.id)
+      if (error) return { success: false, error: error.message }
+    } else {
+      const { error } = await supabase
+        .from('review_comment_likes')
+        .insert([{ comment_id: commentId, user_id: userId }])
+      if (error) return { success: false, error: error.message }
+    }
     return { success: true }
   }
 }

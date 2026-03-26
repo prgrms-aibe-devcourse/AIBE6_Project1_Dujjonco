@@ -130,6 +130,42 @@ export function useReviews(placeId: string, userId?: string, sortBy: 'latest' | 
         return result
     }
 
+    /**
+     * 답글(댓글) 좋아요 토글
+     */
+    const toggleLikeComment = async (commentId: string, currentUserId: string) => {
+        // 낙관적 업데이트: 해당 댓글이 속한 리뷰의 replies 배열을 찾아 상태를 즉시 변경합니다.
+        setReviews((prev) =>
+            prev.map((review) => {
+                const hasComment = review.replies?.some((r) => r.id === commentId)
+                if (hasComment) {
+                    return {
+                        ...review,
+                        replies: review.replies?.map((reply) => {
+                            if (reply.id === commentId) {
+                                const isLiked = !reply.is_liked
+                                return {
+                                    ...reply,
+                                    is_liked: isLiked,
+                                    likes: isLiked ? (reply.likes || 0) + 1 : Math.max(0, (reply.likes || 1) - 1),
+                                }
+                            }
+                            return reply
+                        }),
+                    }
+                }
+                return review
+            }),
+        )
+
+        const result = await reviewsService.toggleCommentLike(commentId, currentUserId)
+        
+        // 배경에서 동기화
+        await fetchReviews(false)
+        
+        return result
+    }
+
     return {
         reviews,
         loading,
@@ -141,5 +177,6 @@ export function useReviews(placeId: string, userId?: string, sortBy: 'latest' | 
         addReply,
         deleteReview,
         deleteReply,
+        toggleLikeComment,
     }
 }

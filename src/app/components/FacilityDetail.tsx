@@ -27,11 +27,18 @@ export function FacilityDetail() {
     const { id } = useParams<{ id: string }>()
     const { user } = useAuth()
     const [sortBy, setSortBy] = useState<'latest' | 'likes'>('latest')
-    const { reviews, loading, averages, addReview, uploadImage, toggleLikeReview, addReply, deleteReview, deleteReply } = useReviews(
-        id || '',
-        user?.id,
-        sortBy,
-    )
+    const {
+        reviews,
+        loading,
+        averages,
+        addReview,
+        uploadImage,
+        toggleLikeReview,
+        addReply,
+        deleteReview,
+        deleteReply,
+        toggleLikeComment,
+    } = useReviews(id || '', user?.id, sortBy)
 
     // UI 상태 관리
     const [facility, setFacility] = useState<Facility | null>(null)
@@ -517,6 +524,15 @@ export function FacilityDetail() {
                                                         <span className="text-[10px] text-gray-400">
                                                             {new Date(reply.created_at).toLocaleDateString()}
                                                         </span>
+                                                        <button
+                                                            onClick={() => user && toggleLikeComment(reply.id, user.id)}
+                                                            disabled={!user}
+                                                            className={`flex items-center gap-0.5 transition-colors ${reply.is_liked ? 'text-red-500' : 'text-gray-300 hover:text-red-400'}`}
+                                                            title="좋아요"
+                                                        >
+                                                            <Heart className={`size-3 ${reply.is_liked ? 'fill-current' : ''}`} />
+                                                            <span className="text-[10px]">{reply.likes || 0}</span>
+                                                        </button>
                                                         {user?.id === reply.user_id && (
                                                             <button
                                                                 onClick={() => handleDeleteReply(reply.id)}
