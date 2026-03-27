@@ -84,3 +84,14 @@ export async function togglePostLike({ postId, userId }: { postId: string; userI
     if (error) throw error
     return data
 }
+
+//마이페이지 사용자가 작성한 게시물 수 조회
+export async function fetchPostCountByUser(userId: string) {
+    const { count, error } = await supabase
+        .from('post')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+
+    if (error) throw error
+    return count ?? 0
+}

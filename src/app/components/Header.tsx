@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext'
 import ThemeButton from './header/theme-button'
 
 export function Header() {
-    const { user } = useAuth()
+    const { user, logout } = useAuth()
 
     return (
         <header className="border-b border-blue-100 bg-white shadow-sm">
@@ -15,7 +15,7 @@ export function Header() {
                             <Accessibility className="size-6 text-white" />
                         </div>
                         <div>
-                            <h1 className="text-2xl text-gray-800">배리어플레이스</h1>
+                            <h1 className="text-2xl text-gray-800">FreeWay</h1>
                             <p className="text-sm text-gray-600">모두를 위한 접근 가능한 공간</p>
                         </div>
                     </Link>
@@ -30,13 +30,22 @@ export function Header() {
                         </Link>
 
                         {user ? (
-                            <Link
-                                to="/mypage"
-                                className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-2 text-white transition-all hover:from-blue-600 hover:to-indigo-700"
-                            >
-                                <User className="size-5" />
-                                <span>{user.name}</span>
-                            </Link>
+                            <>
+                                <Link
+                                    to="/mypage"
+                                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-2 text-white transition-all hover:from-blue-600 hover:to-indigo-700"
+                                >
+                                    <User className="size-5" />
+                                    <span>{user.name}</span>
+                                </Link>
+                                <button
+                                    onClick={logout}
+                                    className="flex cursor-pointer items-center gap-2 rounded-lg border-2 border-gray-500 px-4 py-2 text-gray-600 transition-colors hover:bg-gray-200"
+                                >
+                                    <LogOut className="size-5" />
+                                    <span>로그아웃</span>
+                                </button>
+                            </>
                         ) : (
                             <>
                                 <Link

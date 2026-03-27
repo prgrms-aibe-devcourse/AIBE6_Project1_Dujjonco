@@ -1,58 +1,20 @@
-import { supabase } from '@/supabase/supabase'
+import UserNickname from '@/app/components/UserNickname'
 import { Accessibility, ArrowLeft, Camera, Heart, MapPin, Phone, Send, Trash2 } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { AssistType, ContentType } from '../../constants/api-codes'
+import { useBookmark } from '../../hooks/useBookmark'
+import { useFacilityDetail } from '../../hooks/useFacilityDetail'
+import { useFacilityMeta } from '../../hooks/useFacilityMeta'
 import { useReviews } from '../../hooks/useReviews'
 import { useAuth } from '../contexts/AuthContext'
 import { ImageWithFallback } from './figma/ImageWithFallback'
-
-interface Facility {
-    content_id: string
-    content_type: string
-    title: string
-    address: string
-    addr2?: string | null
-    tel?: string | null
-    lat?: number | null
-    lng?: number | null
-    image_url?: string | null
-    image_url2?: string | null
-
-    parking?: string | null
-    publictransport?: string | null
-    route?: string | null
-    ticketoffice?: string | null
-    promotion?: string | null
-    wheelchair?: string | null
-    exit?: string | null
-    elevator?: string | null
-    restroom?: string | null
-    auditorium?: string | null
-    room?: string | null
-    handicapetc?: string | null
-    braileblock?: string | null
-    helpdog?: string | null
-    guidehuman?: string | null
-    audioguide?: string | null
-    bigprint?: string | null
-    brailepromotion?: string | null
-    guidesystem?: string | null
-    blindhandicapetc?: string | null
-    signguide?: string | null
-    videoguide?: string | null
-    hearingroom?: string | null
-    hearinghandicapetc?: string | null
-    stroller?: string | null
-    lactationroom?: string | null
-    babysparechair?: string | null
-    infantsfamilyetc?: string | null
-}
 
 export function FacilityDetail() {
     const { id } = useParams<{ id: string }>()
     const { user } = useAuth()
     const [sortBy, setSortBy] = useState<'latest' | 'likes'>('latest')
+    const [openAssistKey, setOpenAssistKey] = useState<string | null>(null)
+
     const {
         reviews,
         loading,
@@ -65,8 +27,11 @@ export function FacilityDetail() {
         deleteReply,
     } = useReviews(id || '', user?.id, sortBy)
 
-    // UI 상태 관리
-    const [facility, setFacility] = useState<Facility | null>(null)
+    const { facility, loading: facilityLoading } = useFacilityDetail(id)
+    const { isBookmarked, bookmarkLoading, toggleBookmark } = useBookmark(id, user?.id)
+    const { contentTypeLabel, activeAssistTypes } = useFacilityMeta(facility)
+
+    // 리뷰 관련 UI 상태
     const [newReview, setNewReview] = useState('')
     const [selectedImages, setSelectedImages] = useState<File[]>([])
     const [imagePreviews, setImagePreviews] = useState<string[]>([])
@@ -81,92 +46,9 @@ export function FacilityDetail() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [replyInputs, setReplyInputs] = useState<{ [key: string]: string }>({})
-
-    // 북마크 상태
-    const [isBookmarked, setIsBookmarked] = useState(false)
-    const [bookmarkLoading, setBookmarkLoading] = useState(false)
+    const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({})
 
     const fileInputRef = useRef<HTMLInputElement>(null)
-
-    useEffect(() => {
-        if (id) {
-            fetchFacility(id)
-        }
-    }, [id])
-
-    useEffect(() => {
-        if (!id || !user) {
-            setIsBookmarked(false)
-            return
-        }
-
-        fetchBookmark(id, user.id)
-    }, [id, user])
-
-    //장소 정보를 가져옵니다.
-    const fetchFacility = async (placeId: string) => {
-        const { data, error } = await supabase.from('places').select('*').eq('content_id', placeId).single()
-
-        if (error) {
-            console.error(error)
-            return
-        }
-
-        setFacility(data as Facility)
-    }
-
-    // 북마크 정보를 가져옵니다.
-    const fetchBookmark = async (placeId: string, userId: string) => {
-        const { data, error } = await supabase
-            .from('bookmarks')
-            .select('id')
-            .eq('user_id', userId)
-            .eq('place_id', placeId)
-            .maybeSingle()
-
-        if (error) {
-            console.error('북마크 조회 실패:', error)
-            return
-        }
-
-        setIsBookmarked(!!data)
-    }
-
-    // 북마크를 추가/삭제합니다.
-    const toggleBookmark = async () => {
-        if (!user) {
-            alert('로그인이 필요합니다.')
-            return
-        }
-
-        if (!id || bookmarkLoading) return
-
-        setBookmarkLoading(true)
-
-        try {
-            if (isBookmarked) {
-                const { error } = await supabase.from('bookmarks').delete().eq('user_id', user.id).eq('place_id', id)
-
-                if (error) throw error
-
-                setIsBookmarked(false)
-            } else {
-                const { error } = await supabase.from('bookmarks').insert({
-                    user_id: user.id,
-                    place_id: id,
-                })
-
-                if (error) throw error
-
-                setIsBookmarked(true)
-            }
-        } catch (error) {
-            console.error('북마크 처리 실패:', error)
-            alert('북마크 처리 중 오류가 발생했습니다.')
-        } finally {
-            setBookmarkLoading(false)
-        }
-    }
 
     //이미지 선택 시 미리보기를 생성하고 상태에 저장합니다.
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -201,7 +83,6 @@ export function FacilityDetail() {
         setError(null)
 
         try {
-            // 1. 이미지가 선택되었다면 스토리지에 먼저 업로드합니다.
             const uploadedUrls: string[] = []
             for (const file of selectedImages) {
                 const { url, error: uploadError } = await uploadImage(file)
@@ -209,13 +90,11 @@ export function FacilityDetail() {
                 if (url) uploadedUrls.push(url)
             }
 
-            // 2. 작성된 내용과 이미지 URL을 포함하여 리뷰를 생성합니다.
             const result = await addReview(user.id, newReview, ratings, uploadedUrls)
             if (!result.success) {
                 throw new Error(result.error)
             }
 
-            // 3. 성공 시 폼을 초기화합니다.
             setNewReview('')
             setSelectedImages([])
             setImagePreviews([])
@@ -227,7 +106,7 @@ export function FacilityDetail() {
         }
     }
 
-    //  답글 제출 핸들러
+    // 답글 제출 핸들러
     const handleSubmitReply = async (reviewId: string) => {
         const content = replyInputs[reviewId]
         if (!content?.trim() || !user) return
@@ -235,7 +114,16 @@ export function FacilityDetail() {
         const result = await addReply(reviewId, user.id, content)
         if (result.success) {
             setReplyInputs((prev) => ({ ...prev, [reviewId]: '' }))
+            setExpandedComments((prev) => ({ ...prev, [reviewId]: true }))
         }
+    }
+
+    // 답글 토글 핸들러
+    const toggleComments = (reviewId: string) => {
+        setExpandedComments((prev) => ({
+            ...prev,
+            [reviewId]: !prev[reviewId],
+        }))
     }
 
     // 리뷰 삭제 핸들러
@@ -284,35 +172,22 @@ export function FacilityDetail() {
         )
     }
 
-    if (!facility) {
+    if (facilityLoading) {
         return <div className="py-12 text-center">로딩중...</div>
     }
 
-    // content_type 숫자코드 -> 한글
-    const contentTypeLabelMap: Record<string, string> = {
-        [ContentType.TOURISM]: '관광지',
-        [ContentType.LODGING]: '숙박',
-        [ContentType.RESTAURANT]: '음식점',
+    if (!facility) {
+        return <div className="py-12 text-center">장소 정보를 찾을 수 없습니다.</div>
     }
-
-    const contentTypeLabel = contentTypeLabelMap[facility.content_type] ?? facility.content_type
-
-    // AssistType 기준으로 값 있는 편의시설만 추출
-    const activeAssistTypes = Object.entries(AssistType).filter(([key]) => {
-        const value = facility[key as keyof Facility]
-        return value !== null && value !== undefined && value !== ''
-    })
 
     return (
         <div className="space-y-6 pb-20">
-            {/* 뒤로가기 */}
             <Link to="/" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900">
                 <ArrowLeft className="size-5" />
                 <span>목록으로</span>
             </Link>
 
-            <div className="overflow-hidden rounded-2xl bg-white shadow-lg">
-                {/* 이미지 */}
+            <div className="rounded-2xl bg-white shadow-lg">
                 <div className="relative h-96">
                     <ImageWithFallback
                         src={facility.image_url || '/fallback.png'}
@@ -343,9 +218,7 @@ export function FacilityDetail() {
                     </div>
                 </div>
 
-                {/* 내용 */}
                 <div className="space-y-6 p-8">
-                    {/* 기본 정보 */}
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div className="flex items-center gap-3">
                             <MapPin className="size-5 text-blue-600" />
@@ -355,39 +228,56 @@ export function FacilityDetail() {
                             </p>
                         </div>
 
-                        {facility.tel && (
-                            <div className="flex items-center gap-3">
-                                <Phone className="size-5 text-orange-600" />
-                                <p>{facility.tel}</p>
-                            </div>
-                        )}
+                        <div className="flex items-center gap-3">
+                            <Phone className="size-5 text-orange-600" />
+                            <p>{facility.tel?.trim() || '업체로부터 제공받지 못함'}</p>
+                        </div>
                     </div>
 
-                    {/* 접근성 */}
-                    <div>
-                        <h2 className="mb-3 flex items-center gap-2 text-2xl">
-                            <Accessibility className="size-6 text-blue-500" />
-                            편의시설
-                        </h2>
+                    <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                        {activeAssistTypes.map(([key, label]) => {
+                            const isOpen = openAssistKey === key
+                            const detail = facility[key as keyof typeof facility]
 
-                        <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-                            {activeAssistTypes.map(([key, label]) => (
-                                <div key={key} className="rounded-lg bg-blue-50 p-3">
-                                    {label}
+                            return (
+                                <div key={key} className="relative">
+                                    <button
+                                        type="button"
+                                        onClick={() => setOpenAssistKey((prev) => (prev === key ? null : key))}
+                                        className={`w-full rounded-lg p-3 text-left transition ${
+                                            isOpen ? 'bg-blue-100 ring-2 ring-blue-300' : 'bg-blue-50 hover:bg-blue-100'
+                                        }`}
+                                    >
+                                        {label}
+                                    </button>
+
+                                    {isOpen && (
+                                        <div className="absolute top-full left-6 z-20 mt-3 w-80">
+                                            <div className="relative rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm leading-6 break-words text-gray-700 shadow-lg">
+                                                <div className="absolute -top-2 left-4 h-4 w-4 rotate-45 border-t border-l border-blue-100 bg-white" />
+                                                {detail
+                                                    ? String(detail)
+                                                          .split('<br/>')
+                                                          .map((line, i) => (
+                                                              <span key={i}>
+                                                                  {line}
+                                                                  <br />
+                                                              </span>
+                                                          ))
+                                                    : '상세 정보 없음'}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-                            ))}
-                        </div>
-
-                        {activeAssistTypes.length === 0 && <p className="text-gray-400">등록된 편의시설 정보 없음</p>}
+                            )
+                        })}
                     </div>
                 </div>
             </div>
 
-            {/* 리뷰 섹션 */}
             <div className="space-y-8 rounded-2xl bg-white p-8 shadow-lg">
                 <h2 className="flex items-center gap-2 text-2xl font-bold">리뷰 ({reviews.length})</h2>
 
-                {/* 평균 평점 요약 섹션 */}
                 {averages.count > 0 && (
                     <div className="grid grid-cols-1 gap-4 rounded-2xl bg-blue-50/50 p-6 md:grid-cols-4">
                         <div className="flex flex-col items-center justify-center border-b border-blue-100 pb-4 md:border-r md:border-b-0 md:pb-0">
@@ -417,7 +307,6 @@ export function FacilityDetail() {
                     </div>
                 )}
 
-                {/* 리뷰 작성 폼 */}
                 {user ? (
                     <form onSubmit={handleSubmitReview} className="space-y-4 rounded-xl bg-gray-50 p-6">
                         <div className="space-y-2">
@@ -436,7 +325,6 @@ export function FacilityDetail() {
                             />
                         </div>
 
-                        {/* 별점 선택 영역 */}
                         <div className="grid grid-cols-1 gap-6 rounded-lg border border-gray-200 bg-white p-4 md:grid-cols-3">
                             <StarRatingInput
                                 label="진입로"
@@ -455,7 +343,6 @@ export function FacilityDetail() {
                             />
                         </div>
 
-                        {/* 이미지 프리뷰 */}
                         {imagePreviews.length > 0 && (
                             <div className="flex flex-wrap gap-2">
                                 {imagePreviews.map((url, index) => (
@@ -521,9 +408,7 @@ export function FacilityDetail() {
                     </div>
                 )}
 
-                {/* 리뷰 목록 섹션 */}
                 <div className="space-y-6">
-                    {/* 정렬 버튼 영역 */}
                     <div className="flex items-center justify-between">
                         <h2 className="flex items-center gap-2 text-2xl font-bold">리뷰 ({reviews.length})</h2>
                         <div className="flex gap-2">
@@ -550,9 +435,11 @@ export function FacilityDetail() {
                             <div key={review.id} className="space-y-3 border-b border-gray-100 pb-6 last:border-0">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
-                                        <span className="font-bold text-gray-800">
-                                            사용자 {review.user_id.slice(0, 4)}
-                                        </span>
+                                        <UserNickname
+                                            userId={review.user_id}
+                                            fallback="사용자"
+                                            className="font-bold text-gray-800"
+                                        />
                                         {user?.id === review.user_id && (
                                             <button
                                                 onClick={() => handleDeleteReview(review.id)}
@@ -568,7 +455,6 @@ export function FacilityDetail() {
                                     </span>
                                 </div>
 
-                                {/* 별점 표시 */}
                                 <div className="flex flex-wrap gap-4 text-xs font-medium text-gray-500">
                                     <div className="flex items-center gap-1">
                                         <span className="rounded bg-blue-50 px-2 py-0.5 text-blue-600">진입로</span>
@@ -621,8 +507,7 @@ export function FacilityDetail() {
                                     </div>
                                 )}
 
-                                {/* 좋아요 버튼 */}
-                                <div className="pt-2">
+                                <div className="flex flex-col items-start gap-3 pt-2">
                                     <button
                                         onClick={() => user && toggleLikeReview(review.id, user.id)}
                                         disabled={!user}
@@ -635,40 +520,50 @@ export function FacilityDetail() {
                                         <Heart className={`size-4 ${review.is_liked ? 'fill-current' : ''}`} />
                                         <span>좋아요 {review.likes || 0}</span>
                                     </button>
+
+                                    {review.replies && review.replies.length > 0 && (
+                                        <button
+                                            onClick={() => toggleComments(review.id)}
+                                            className="ml-1 text-sm font-medium text-blue-600 hover:text-blue-700"
+                                        >
+                                            {expandedComments[review.id]
+                                                ? '답글 접기'
+                                                : `답글 ${review.replies.length}개 보기`}
+                                        </button>
+                                    )}
                                 </div>
 
-                                {/* 답글 목록 및 작성 섹션 */}
-                                <div className="mt-4 ml-4 space-y-4 border-l-2 border-gray-100 pl-4">
-                                    {/* 기존 답글 렌더링 */}
-                                    {review.replies && review.replies.length > 0 && (
-                                        <div className="space-y-3">
-                                            {review.replies.map((reply) => (
-                                                <div key={reply.id} className="text-sm">
-                                                    <div className="mb-1 flex items-center gap-2">
-                                                        <span className="font-bold text-gray-700">
-                                                            익명 {reply.user_id.slice(0, 4)}
-                                                        </span>
-                                                        <span className="text-[10px] text-gray-400">
-                                                            {new Date(reply.created_at).toLocaleDateString()}
-                                                        </span>
-                                                        {user?.id === reply.user_id && (
-                                                            <button
-                                                                onClick={() => handleDeleteReply(reply.id)}
-                                                                className="text-gray-300 transition-colors hover:text-red-500"
-                                                                title="답글 삭제"
-                                                            >
-                                                                <Trash2 className="size-3" />
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                    <p className="text-gray-600">{reply.content}</p>
+                                {expandedComments[review.id] && review.replies && review.replies.length > 0 && (
+                                    <div className="animate-in fade-in slide-in-from-top-2 mt-4 ml-4 space-y-3 border-l-2 border-gray-100 pl-4 duration-200">
+                                        {review.replies.map((reply) => (
+                                            <div key={reply.id} className="text-sm">
+                                                <div className="mb-1 flex items-center gap-2">
+                                                    <UserNickname
+                                                        userId={reply.user_id}
+                                                        fallback="익명"
+                                                        className="font-bold text-gray-700"
+                                                    />
+                                                    <span className="text-[10px] text-gray-400">
+                                                        {new Date(reply.created_at).toLocaleDateString()}
+                                                    </span>
+                                                    {user?.id === reply.user_id && (
+                                                        <button
+                                                            onClick={() => handleDeleteReply(reply.id)}
+                                                            className="text-gray-300 transition-colors hover:text-red-500"
+                                                            title="답글 삭제"
+                                                        >
+                                                            <Trash2 className="size-3" />
+                                                        </button>
+                                                    )}
                                                 </div>
-                                            ))}
-                                        </div>
-                                    )}
+                                                <p className="text-gray-600">{reply.content}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
 
-                                    {/* 답글 입력창 (로그인 시에만 노출) */}
-                                    {user && (
+                                {user && (
+                                    <div className="mt-4 ml-4 border-l-2 border-gray-100 pl-4">
                                         <div className="flex gap-2">
                                             <input
                                                 type="text"
@@ -691,8 +586,8 @@ export function FacilityDetail() {
                                                 등록
                                             </button>
                                         </div>
-                                    )}
-                                </div>
+                                    </div>
+                                )}
                             </div>
                         ))
                     ) : (
