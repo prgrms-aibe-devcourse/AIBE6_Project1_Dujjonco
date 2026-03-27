@@ -1,11 +1,10 @@
-import { Accessibility, ArrowDownUp, CircleParking, DoorOpen, Heart, MapPin } from 'lucide-react'
+import { Accessibility, ArrowDownUp, CircleParking, DoorOpen, Heart, MapPin, Star } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { AreaCode, ContentType, getActiveIcons } from '../../constants/api-codes'
 import { usePlaces } from '../../hooks/usePlaces'
 import { ImageWithFallback } from './figma/ImageWithFallback'
 
-// 카테고리 매핑
 const CATEGORY_MAP: Record<string, string> = {
     전체: '전체',
     관광지: ContentType.TOURISM,
@@ -13,7 +12,6 @@ const CATEGORY_MAP: Record<string, string> = {
     음식점: ContentType.RESTAURANT,
 }
 
-// 지역 매핑
 const LOCATION_MAP: Record<string, string> = {
     전체: '전체',
     서울: AreaCode.SEOUL,
@@ -35,7 +33,8 @@ const LOCATION_MAP: Record<string, string> = {
     제주: AreaCode.JEJU,
 }
 
-type SortType = 'latest' | 'rating'
+// review 추가
+type SortType = 'latest' | 'rating' | 'review'
 
 export function Home() {
     const [selectedCategory, setSelectedCategory] = useState<string>('전체')
@@ -59,7 +58,6 @@ export function Home() {
         { key: 'parking', label: '장애인주차', icon: CircleParking },
     ]
 
-    // usePlaces 훅으로 실제 DB 데이터 가져오기
     const { places, loading, totalPages } = usePlaces(
         {
             category: CATEGORY_MAP[selectedCategory],
@@ -73,13 +71,11 @@ export function Home() {
         page,
     )
 
-    // 배리어프리 필터 토글
     const toggleFeature = (key: keyof typeof selectedFeatures) => {
         setSelectedFeatures((prev) => ({ ...prev, [key]: !prev[key] }))
         setPage(1)
     }
 
-    // 필터 초기화
     const resetFeatures = () => {
         setSelectedFeatures({ wheelchair: false, elevator: false, restroom: false, parking: false })
         setPage(1)
@@ -100,17 +96,14 @@ export function Home() {
 
             {/* Filters */}
             <div className="space-y-4 rounded-xl bg-white p-6 shadow-sm">
-                {/* 카테고리 (업종 필터) */}
+                {/* 카테고리 */}
                 <div>
                     <label className="mb-2 block text-sm text-gray-700">카테고리</label>
                     <div className="flex flex-wrap gap-2">
                         {categories.map((category) => (
                             <button
                                 key={category}
-                                onClick={() => {
-                                    setSelectedCategory(category)
-                                    setPage(1)
-                                }}
+                                onClick={() => { setSelectedCategory(category); setPage(1) }}
                                 className={`rounded-full px-4 py-2 text-sm transition-colors ${
                                     selectedCategory === category
                                         ? 'bg-blue-500 text-white'
@@ -163,10 +156,7 @@ export function Home() {
                         {locations.map((location) => (
                             <button
                                 key={location}
-                                onClick={() => {
-                                    setSelectedLocation(location)
-                                    setPage(1)
-                                }}
+                                onClick={() => { setSelectedLocation(location); setPage(1) }}
                                 className={`rounded-full px-4 py-2 text-sm transition-colors ${
                                     selectedLocation === location
                                         ? 'bg-indigo-500 text-white'
@@ -183,10 +173,7 @@ export function Home() {
             {/* 정렬 버튼 */}
             <div className="flex justify-end gap-2">
                 <button
-                    onClick={() => {
-                        setSortType('latest')
-                        setPage(1)
-                    }}
+                    onClick={() => { setSortType('latest'); setPage(1) }}
                     className={`rounded-full px-4 py-2 text-sm ${
                         sortType === 'latest' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
@@ -194,15 +181,21 @@ export function Home() {
                     최신순
                 </button>
                 <button
-                    onClick={() => {
-                        setSortType('rating')
-                        setPage(1)
-                    }}
+                    onClick={() => { setSortType('rating'); setPage(1) }}
                     className={`rounded-full px-4 py-2 text-sm ${
                         sortType === 'rating' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                 >
                     평점순
+                </button>
+                {/* 리뷰많은순 추가 */}
+                <button
+                    onClick={() => { setSortType('review'); setPage(1) }}
+                    className={`rounded-full px-4 py-2 text-sm ${
+                        sortType === 'review' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                >
+                    리뷰많은순
                 </button>
             </div>
 
@@ -235,14 +228,28 @@ export function Home() {
 
                             <div className="space-y-3 p-5">
                                 <div>
-                                    <h3 className="mb-1 text-xl">{place.title}</h3>
+                                    {/* 가게명 + 평균 별점 */}
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="mb-1 text-xl">{place.title}</h3>
+                                        <div className="flex items-center gap-1 text-sm text-yellow-500">
+                                            <Star className="size-4 fill-yellow-400" />
+                                            <span>
+                                                {place.avg_score !== undefined
+                                                    ? place.avg_score.toFixed(2)
+                                                    : '0.00'}
+                                            </span>
+                                            <span className="text-xs text-gray-400">
+                                                ({place.review_count ?? 0})
+                                            </span>
+                                        </div>
+                                    </div>
                                     <div className="flex items-center gap-2 text-sm text-gray-600">
                                         <MapPin className="size-4" />
                                         <span>{place.address}</span>
                                     </div>
                                 </div>
 
-                                {/* 배리어프리 아이콘 (DB 기반) */}
+                                {/* 배리어프리 아이콘 */}
                                 <div className="flex flex-wrap gap-1.5">
                                     {getActiveIcons(place)
                                         .slice(0, 4)
@@ -262,7 +269,7 @@ export function Home() {
                 </div>
             )}
 
-            {/* 검색 결과 없을 때 안내 메시지 */}
+            {/* 검색 결과 없을 때 */}
             {!loading && places.length === 0 && (
                 <div className="rounded-xl bg-gray-50 py-12 text-center">
                     <Accessibility className="mx-auto mb-4 size-16 text-gray-300" />
@@ -273,7 +280,6 @@ export function Home() {
             {/* 페이지네이션 */}
             {!loading && totalPages > 1 && (
                 <div className="mt-8 flex items-center justify-center gap-2">
-                    {/* 이전 버튼 */}
                     <button
                         onClick={() => setPage((p) => p - 1)}
                         disabled={page === 1}
@@ -281,8 +287,6 @@ export function Home() {
                     >
                         이전
                     </button>
-
-                    {/* 페이지 번호 (현재 페이지 기준 앞뒤 5개씩) */}
                     {Array.from({ length: totalPages }, (_, i) => i + 1)
                         .filter((p) => p >= Math.max(1, page - 4) && p <= Math.min(totalPages, page + 5))
                         .map((p) => (
@@ -296,8 +300,6 @@ export function Home() {
                                 {p}
                             </button>
                         ))}
-
-                    {/* 다음 버튼 */}
                     <button
                         onClick={() => setPage((p) => p + 1)}
                         disabled={page === totalPages}
