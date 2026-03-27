@@ -1,3 +1,7 @@
+import { fetchBookmarksByUser } from '@/supabase/query/bookmark'
+import { fetchPostCountByUser } from '@/supabase/query/post'
+import { fetchReviewCountByUser } from '@/supabase/query/review'
+import { useQuery } from '@tanstack/react-query'
 import { Accessibility, Calendar, Edit2, LogOut, Mail, Save, User, X } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
@@ -14,6 +18,22 @@ export function MyPage() {
     const [nickname, setNickname] = useState(user?.nickname || '')
 
     const accessibilityTypes = ['일반', '지체장애', '시각장애', '청각장애', '발달장애', '기타']
+
+    const { data: postCount = 0 } = useQuery({
+        queryKey: ['postCount', user?.id ?? ''],
+        queryFn: () => fetchPostCountByUser(user!.id),
+        enabled: !!user,
+    })
+    const { data: bookmarkCount = 0 } = useQuery({
+        queryKey: ['bookmarkCount', user?.id ?? ''],
+        queryFn: () => fetchBookmarksByUser(user!.id),
+        enabled: !!user,
+    })
+    const { data: reviewCount = 0 } = useQuery({
+        queryKey: ['reviewCount', user?.id ?? ''],
+        queryFn: () => fetchReviewCountByUser(user!.id),
+        enabled: !!user,
+    })
 
     if (!user) {
         navigate('/login')
@@ -204,16 +224,16 @@ export function MyPage() {
                 {/* Stats Card */}
                 <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
                     <div className="rounded-xl bg-white p-6 text-center shadow">
-                        <div className="mb-2 text-3xl">0</div>
+                        <div className="mb-2 text-3xl">{reviewCount}</div>
                         <div className="text-sm text-gray-600">작성한 리뷰</div>
                     </div>
                     <div className="rounded-xl bg-white p-6 text-center shadow">
-                        <div className="mb-2 text-3xl">0</div>
+                        <div className="mb-2 text-3xl">{bookmarkCount}</div>
                         <div className="text-sm text-gray-600">저장한 장소</div>
                     </div>
                     <div className="rounded-xl bg-white p-6 text-center shadow">
-                        <div className="mb-2 text-3xl">0</div>
-                        <div className="text-sm text-gray-600">도움이 된 리뷰</div>
+                        <div className="mb-2 text-3xl">{postCount}</div>
+                        <div className="text-sm text-gray-600">작성한 게시물</div>
                     </div>
                 </div>
 
