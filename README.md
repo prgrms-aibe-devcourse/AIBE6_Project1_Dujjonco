@@ -33,43 +33,92 @@
 
 ## 2. 폴더 트리
 ```
-  root/
-├── .env                        # API 키 (DATA_API_KEY), Supabase 설정값
-├── .gitignore                  # node_modules, .env 등 제외
-├── package.json                # scripts에 "data:upload": "tsx scripts/upload-data.ts" 추가
-├── tsconfig.json               # TypeScript 설정
-├── scripts/                    # [관리자 전용] 데이터 관련 스크립트
-│   └── upload-data.ts          # 공공 API -> Supabase 데이터 적재 스크립트
-└── src/
-    ├── api/                    # Supabase Client 설정 및 공통 API 인스턴스
-    │   └── supabase.ts
-    ├── assets/                 # 이미지, 로고, 전역 CSS (index.css)
-    ├── constants/              # [중요] 전역 상수 및 설정
-    │   └── api-codes.ts        # 지역코드, 콘텐츠타입, 배리어프리 아이콘 설정
-    ├── components/             # [공통 UI] 프로젝트 어디서든 쓰이는 순수 컴포넌트
-    │   ├── common/             # Button, Input, Modal, LoadingSpinner
-    │   └── layout/             # Header, Footer, Sidebar, LayoutContainer
-    ├── constants/              # [설정값] 변경되지 않는 고정 데이터
-    │   └── api-codes.ts        # AreaCode, ContentType, BARRIER_ICONS 등
-    ├── features/               # [도메인 중심] 핵심 비즈니스 로직 (백엔드 도메인과 대응)
-    │   ├── auth/               # 인증 도메인
-    │   │   ├── components/     # LoginForm, SignupForm
-    │   │   ├── hooks/          # useAuth, useUser
-    │   │   └── services/       # login, logout API 함수
-    │   ├── comment/            # 댓글 서비스 도메인
-    │   │   ├── components/     # 
-    │   │   ├── hooks/          # 
-    │   └── post/               # 자유게시판 도메인
-    │       ├── components/     # 
-    │       ├── hooks/          # 
-    ├── hooks/                  # [전역 훅] 도메인에 종속되지 않는 공통 훅 (useLocalStorage 등)
-    ├── pages/                  # [라우팅] 실제 URL 페이지 컴포넌트
-    │   ├── Home.tsx            # 메인 페이지 (features/post 등 조합)
-    │   ├── PlaceDetail.tsx     # 상세 페이지
-    │   └── Login.tsx
-    ├── types/                  # [전역 타입]
-    │   └── database.types.ts   # Supabase CLI로 추출한 DB 스키마 타입
-    └── utils/                  # [전역 유틸] 날짜 포맷, 문자열 조작 등 순수 함수
+  src/
+├── app/
+│   ├── components/
+│   │   ├── comment/
+│   │   │   ├── comment-editor.tsx
+│   │   │   ├── comment-item.tsx
+│   │   │   └── comment-list.tsx
+│   │   ├── figma/
+│   │   │   └── ImageWithFallback.tsx
+│   │   ├── modal/
+│   │   │   ├── alert-modal.tsx
+│   │   │   └── post-editor-modal.tsx
+│   │   ├── post/
+│   │   │   ├── create-post-button.tsx
+│   │   │   ├── delete-post-button.tsx
+│   │   │   ├── edit-post-button.tsx
+│   │   │   ├── like-post-button.tsx
+│   │   │   ├── post-feed.tsx
+│   │   │   └── post-item.tsx
+│   │   ├── ui/                          # shadcn/ui 컴포넌트
+│   │   ├── Community.tsx
+│   │   ├── FacilityDetail.tsx
+│   │   ├── Header.tsx
+│   │   ├── Home.tsx
+│   │   ├── Login.tsx
+│   │   ├── LoginWrapper.tsx
+│   │   ├── MyPage.tsx
+│   │   ├── NotFound.tsx
+│   │   ├── PostDetailPage.tsx
+│   │   ├── Register.tsx
+│   │   ├── RegisterWrapper.tsx
+│   │   ├── Root.tsx
+│   │   ├── fallback.tsx
+│   │   └── loader.tsx
+│   ├── contexts/
+│   │   └── AuthContext.tsx
+│   ├── data/
+│   │   └── facilities.tsx
+│   ├── services/
+│   │   ├── auth.ts
+│   │   ├── reviews.ts
+│   │   └── user.ts
+│   ├── util/
+│   │   └── time.ts
+│   └── routes.tsx
+├── constants/
+│   └── api-codes.ts
+├── hooks/
+│   ├── mutations/
+│   │   ├── comment/
+│   │   │   ├── use-create-comment.ts
+│   │   │   ├── use-delete-comment.ts
+│   │   │   └── use-update-comment.ts
+│   │   └── post/
+│   │       ├── use-create-post.ts
+│   │       ├── use-delete-post.ts
+│   │       ├── use-toggle-post-like.ts
+│   │       └── use-update-post.ts
+│   ├── queries/
+│   │   ├── query-keys.ts
+│   │   ├── use-comments-data.ts
+│   │   ├── use-post-data.ts
+│   │   ├── use-posts-data.ts
+│   │   └── use-user-nickname.ts
+│   ├── usePlaces.ts
+│   └── useReviews.ts
+├── provider/
+│   └── modal-provider.tsx
+├── store/
+│   ├── alert-modal.ts
+│   └── post-editor-modal.ts
+├── styles/
+│   ├── fonts.css
+│   ├── index.css
+│   ├── tailwind.css
+│   └── theme.css
+├── supabase/
+│   ├── query/
+│   │   ├── post-comments.ts
+│   │   ├── post-images.ts
+│   │   └── post.ts
+│   └── supabase.ts
+├── database.types.ts
+├── main.tsx
+└── types.ts
+
 ```
 
 ---
