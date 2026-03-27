@@ -139,7 +139,17 @@ export function FacilityDetail() {
                 </div>
             </div>
 
-            <div className="space-y-8 rounded-2xl bg-white p-8 shadow-lg">
+            <div className="space-y-12 rounded-2xl bg-white p-8 shadow-lg">
+                <ReviewAverages
+                    total={averages.total}
+                    entrance={averages.entrance}
+                    interior={averages.interior}
+                    facility={averages.facility}
+                    count={averages.count}
+                />
+
+                <ReviewForm user={user} onSubmit={addReview} onUploadImage={uploadImage} />
+
                 <ReviewList
                     reviews={reviews}
                     loading={loading}
@@ -151,16 +161,6 @@ export function FacilityDetail() {
                     onAddReply={addReply}
                     onDeleteReply={deleteReply}
                 />
-
-                <ReviewAverages
-                    total={averages.total}
-                    entrance={averages.entrance}
-                    interior={averages.interior}
-                    facility={averages.facility}
-                    count={averages.count}
-                />
-
-                <ReviewForm user={user} onSubmit={addReview} onUploadImage={uploadImage} />
             </div>
         </div>
     )
