@@ -11,6 +11,9 @@ node_modules
 dist
 dist-ssr
 *.local
+.env.default
+.env
+.env.local
 
 # env files
 .env

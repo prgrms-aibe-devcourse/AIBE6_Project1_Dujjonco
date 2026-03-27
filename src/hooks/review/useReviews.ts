@@ -1,28 +1,22 @@
-import { useEffect, useState } from 'react'
-import { reviewsService, type Review } from '../app/services/reviews'
+// 특정 장소의 리뷰 목록을 가져오고, 새로운 리뷰 작성, 좋아요 토글, 답글 관리 기능을 제공하는 커스텀 훅
 
-/**
- * 특정 장소의 리뷰 목록 관리 및 작성 기능을 제공하는 커스텀 훅
- * @param placeId 장소 ID
- * @param userId 현재 로그인한 사용자 ID
- * @param sortBy 정렬 방식 (최신순 또는 좋아요순)
- */
+import { useEffect, useState } from 'react'
+import { reviewsService, type Review } from '../../app/services/reviews'
+
 export function useReviews(placeId: string, userId?: string, sortBy: 'latest' | 'likes' = 'latest') {
     const [reviews, setReviews] = useState<Review[]>([]) // 리뷰 목록 상태
     const [loading, setLoading] = useState(true) // 로딩 상태
     const [averages, setAverages] = useState({ total: 0, entrance: 0, interior: 0, facility: 0, count: 0 })
 
     useEffect(() => {
-        // 장소 ID나 정렬 방식이 변경될 때마다 리뷰를 다시 가져옵니다.
+        // 장소 ID나 정렬 방식이 변경될 때마다 리뷰를 다시 가져옴.
         if (placeId) {
             fetchReviews()
             fetchAverages()
         }
     }, [placeId, userId, sortBy])
 
-    /**
-     * Supabase에서 리뷰 데이터를 가져옵니다.
-     */
+    // Supabase에서 리뷰 데이터를 가져옴.
     const fetchReviews = async (showLoading = true) => {
         try {
             if (showLoading) setLoading(true)
@@ -35,17 +29,13 @@ export function useReviews(placeId: string, userId?: string, sortBy: 'latest' | 
         }
     }
 
-    /**
-     * 장소의 평균 평점을 가져옵니다.
-     */
+    // 장소의 평균 평점을 가져옴.
     const fetchAverages = async () => {
         const data = await reviewsService.getAverageRatings(placeId)
         setAverages(data)
     }
 
-    /**
-     * 새로운 리뷰를 작성하고 목록을 갱신합니다.
-     */
+    // 새로운 리뷰를 작성하고 목록을 갱신함.
     const addReview = async (
         currentUserId: string,
         content: string,
@@ -54,18 +44,14 @@ export function useReviews(placeId: string, userId?: string, sortBy: 'latest' | 
     ) => {
         const result = await reviewsService.createReview(placeId, currentUserId, content, ratings, images)
         if (result.success) {
-            await fetchReviews(false) // 작성 성공 시 목록 새로고침 (로딩 표시 없이)
+            await fetchReviews(false)
             await fetchAverages()
         }
         return result
     }
 
-    /**
-     * 좋아요 토글
-     */
+    // 좋아요 토글
     const toggleLikeReview = async (reviewId: string, currentUserId: string) => {
-        // [Antigravity]: 낙관적 업데이트(Optimistic Update) 구현
-        // 서버 응답을 기다리지 않고 로컬 상태를 즉시 변경하여 사용자 경험을 부드럽게 합니다.
         setReviews((prev) =>
             prev.map((review) => {
                 if (review.id === reviewId) {
@@ -82,34 +68,26 @@ export function useReviews(placeId: string, userId?: string, sortBy: 'latest' | 
 
         const result = await reviewsService.toggleLike(reviewId, currentUserId)
 
-        // [Antigravity]: 성공/실패 여부와 관계없이 서버와 데이터를 동기화하되,
-        // showLoading을 false로 설정하여 깜빡임을 방지합니다.
         await fetchReviews(false)
 
         return result
     }
 
-    /**
-     * 이미지 업로드를 수행합니다.
-     */
+    // 이미지 업로드
     const uploadImage = async (file: File) => {
         return await reviewsService.uploadReviewImage(file)
     }
 
-    /**
-     * 리뷰에 답글을 추가합니다.
-     */
+    // 리뷰에 답글 추가
     const addReply = async (reviewId: string, currentUserId: string, content: string) => {
         const result = await reviewsService.createReply(reviewId, currentUserId, content)
         if (result.success) {
-            await fetchReviews() // 답글 작성 성공 시 목록 새로고침
+            await fetchReviews()
         }
         return result
     }
 
-    /**
-     * 리뷰를 삭제합니다.
-     */
+    // 리뷰 삭제
     const deleteReview = async (reviewId: string, currentUserId: string) => {
         const result = await reviewsService.deleteReview(reviewId, currentUserId)
         if (result.success) {
@@ -119,50 +97,12 @@ export function useReviews(placeId: string, userId?: string, sortBy: 'latest' | 
         return result
     }
 
-    /**
-     * 답글을 삭제합니다.
-     */
+    // 답글 삭제
     const deleteReply = async (replyId: string, currentUserId: string) => {
         const result = await reviewsService.deleteReply(replyId, currentUserId)
         if (result.success) {
             await fetchReviews(false)
         }
-        return result
-    }
-
-    /**
-     * 답글(댓글) 좋아요 토글
-     */
-    const toggleLikeComment = async (commentId: string, currentUserId: string) => {
-        // 낙관적 업데이트: 해당 댓글이 속한 리뷰의 replies 배열을 찾아 상태를 즉시 변경합니다.
-        setReviews((prev) =>
-            prev.map((review) => {
-                const hasComment = review.replies?.some((r) => r.id === commentId)
-                if (hasComment) {
-                    return {
-                        ...review,
-                        replies: review.replies?.map((reply) => {
-                            if (reply.id === commentId) {
-                                const isLiked = !reply.is_liked
-                                return {
-                                    ...reply,
-                                    is_liked: isLiked,
-                                    likes: isLiked ? (reply.likes || 0) + 1 : Math.max(0, (reply.likes || 1) - 1),
-                                }
-                            }
-                            return reply
-                        }),
-                    }
-                }
-                return review
-            }),
-        )
-
-        const result = await reviewsService.toggleCommentLike(commentId, currentUserId)
-        
-        // 배경에서 동기화
-        await fetchReviews(false)
-        
         return result
     }
 
@@ -177,6 +117,5 @@ export function useReviews(placeId: string, userId?: string, sortBy: 'latest' | 
         addReply,
         deleteReview,
         deleteReply,
-        toggleLikeComment,
     }
 }
