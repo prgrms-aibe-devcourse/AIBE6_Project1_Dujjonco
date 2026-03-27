@@ -102,6 +102,9 @@
 │   │   ├── use-post-data.ts                  # 게시글 단건 조회
 │   │   ├── use-posts-data.ts                 # 게시글 목록 조회
 │   │   └── use-user-nickname.ts              # 유저 닉네임 조회
+│   ├── useFacilityDetail.ts                  # 장소 상세정보 조회 훅
+│   ├── useFacilityMeta.ts                    # 장소 종류 조회 훅
+│   ├── useBookmark                           # 장소 상세정보 내부 북마크 기능 훅
 │   ├── usePlaces.ts                          # 장소 데이터 조회 훅
 │   └── useReviews.ts                         # 리뷰 데이터 조회 훅
 ├── provider/
