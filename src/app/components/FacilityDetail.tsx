@@ -1,9 +1,9 @@
 import { Accessibility, ArrowLeft, Camera, Heart, MapPin, Phone, Send, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router'
+import { AssistType, ContentType } from '../../../constants/api-codes'
 import { useReviews } from '../../hooks/useReviews'
 import { useAuth } from '../contexts/AuthContext'
-import { AssistType, ContentType } from '../../../constants/api-codes'
 import { supabase } from '../lib/supabase'
 import { ImageWithFallback } from './figma/ImageWithFallback'
 
@@ -82,6 +82,10 @@ export function FacilityDetail() {
     const [error, setError] = useState<string | null>(null)
     const [replyInputs, setReplyInputs] = useState<{ [key: string]: string }>({})
 
+    // 북마크 상태
+    const [isBookmarked, setIsBookmarked] = useState(false)
+    const [bookmarkLoading, setBookmarkLoading] = useState(false)
+
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
@@ -89,6 +93,15 @@ export function FacilityDetail() {
             fetchFacility(id)
         }
     }, [id])
+
+    useEffect(() => {
+        if (!id || !user) {
+            setIsBookmarked(false)
+            return
+        }
+
+        fetchBookmark(id, user.id)
+    }, [id, user])
 
     //장소 정보를 가져옵니다.
     const fetchFacility = async (placeId: string) => {
@@ -100,6 +113,59 @@ export function FacilityDetail() {
         }
 
         setFacility(data as Facility)
+    }
+
+    // 북마크 정보를 가져옵니다.
+    const fetchBookmark = async (placeId: string, userId: string) => {
+        const { data, error } = await supabase
+            .from('bookmarks')
+            .select('id')
+            .eq('user_id', userId)
+            .eq('place_id', placeId)
+            .maybeSingle()
+
+        if (error) {
+            console.error('북마크 조회 실패:', error)
+            return
+        }
+
+        setIsBookmarked(!!data)
+    }
+
+    // 북마크를 추가/삭제합니다.
+    const toggleBookmark = async () => {
+        if (!user) {
+            alert('로그인이 필요합니다.')
+            return
+        }
+
+        if (!id || bookmarkLoading) return
+
+        setBookmarkLoading(true)
+
+        try {
+            if (isBookmarked) {
+                const { error } = await supabase.from('bookmarks').delete().eq('user_id', user.id).eq('place_id', id)
+
+                if (error) throw error
+
+                setIsBookmarked(false)
+            } else {
+                const { error } = await supabase.from('bookmarks').insert({
+                    user_id: user.id,
+                    place_id: id,
+                })
+
+                if (error) throw error
+
+                setIsBookmarked(true)
+            }
+        } catch (error) {
+            console.error('북마크 처리 실패:', error)
+            alert('북마크 처리 중 오류가 발생했습니다.')
+        } finally {
+            setBookmarkLoading(false)
+        }
     }
 
     //이미지 선택 시 미리보기를 생성하고 상태에 저장합니다.
@@ -255,6 +321,21 @@ export function FacilityDetail() {
                     />
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+
+                    <button
+                        type="button"
+                        onClick={toggleBookmark}
+                        disabled={bookmarkLoading}
+                        className="absolute top-4 right-4 z-10 flex size-12 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-70"
+                        aria-label={isBookmarked ? '북마크 해제' : '북마크 추가'}
+                        title={isBookmarked ? '북마크 해제' : '북마크 추가'}
+                    >
+                        <Heart
+                            className={`size-6 transition-colors ${
+                                isBookmarked ? 'fill-blue-500 text-blue-500' : 'text-gray-500'
+                            }`}
+                        />
+                    </button>
 
                     <div className="absolute right-0 bottom-0 left-0 p-8 text-white">
                         <h1 className="mb-2 text-4xl">{facility.title}</h1>
