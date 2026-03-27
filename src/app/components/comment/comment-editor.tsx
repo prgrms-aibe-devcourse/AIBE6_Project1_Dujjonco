@@ -1,7 +1,7 @@
 import { useAuth } from '@/app/contexts/AuthContext'
 import { Button } from '@/app/ui2/button2'
 import { Textarea } from '@/app/ui2/textarea'
-import { useCreateComment } from '@/hooks/mutations/comment/use-create-comment'
+import { useCreateComment } from '@/hooks/mutations/post/comment/use-create-comment'
 import { useState } from 'react'
 import { toast } from 'sonner'
 

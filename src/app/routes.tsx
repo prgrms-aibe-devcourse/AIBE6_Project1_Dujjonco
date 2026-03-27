@@ -8,6 +8,8 @@ import { NotFound } from './components/NotFound'
 import PostDetailPage from './components/PostDetailPage'
 import { RegisterWrapper as Register } from './components/RegisterWrapper'
 import { Root } from './components/Root'
+import { Bookmark } from './components/bookmark'
+
 export const router = createBrowserRouter([
     {
         path: '/',
@@ -18,6 +20,7 @@ export const router = createBrowserRouter([
             { path: 'mypage', Component: MyPage },
             { path: 'community', Component: Community },
             { path: 'post/:id', Component: PostDetailPage },
+            { path: 'bookmark', Component: Bookmark },
             { path: '*', Component: NotFound },
         ],
     },

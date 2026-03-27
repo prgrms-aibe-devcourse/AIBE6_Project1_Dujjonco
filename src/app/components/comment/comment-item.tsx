@@ -1,8 +1,9 @@
 import { useAuth } from '@/app/contexts/AuthContext'
 import { formatTimeAgo } from '@/app/util/time'
 import defaultAvatar from '@/assets/default-avatar.png'
-import { useDeleteComment } from '@/hooks/mutations/comment/use-delete-comment'
-import { useUpdateComment } from '@/hooks/mutations/comment/use-update-comment'
+import { useDeleteComment } from '@/hooks/mutations/post/comment/use-delete-comment'
+import { useUpdateComment } from '@/hooks/mutations/post/comment/use-update-comment'
+import { useUserNickname } from '@/hooks/queries/use-user-nickname'
 import { useOpenAlertModal } from '@/store/alert-modal'
 import { useState } from 'react'
 import { Link } from 'react-router'
@@ -19,6 +20,7 @@ type Comment = {
 
 export default function CommentItem({ comment }: { comment: Comment }) {
     const { user } = useAuth()
+    const { data: nickname } = useUserNickname(comment.user_id ?? '') // ✅ 추가
     const openAlertModal = useOpenAlertModal()
     const [isEditing, setIsEditing] = useState(false)
     const [editContent, setEditContent] = useState(comment.content)
@@ -57,7 +59,7 @@ export default function CommentItem({ comment }: { comment: Comment }) {
                     </div>
                 </Link>
                 <div className="flex w-full flex-col gap-2">
-                    <div className="font-bold">{user?.nickname ?? '알 수 없음'}</div>
+                    <div className="font-bold">{nickname ?? '알 수 없음'}</div> {/* ✅ 수정 */}
                     {isEditing ? (
                         <div className="flex flex-col gap-2">
                             <textarea
