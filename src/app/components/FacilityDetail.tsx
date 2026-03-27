@@ -1,60 +1,20 @@
 import UserNickname from '@/app/components/UserNickname'
-import { supabase } from '@/supabase/supabase'
 import { Accessibility, ArrowLeft, Camera, Heart, MapPin, Phone, Send, Trash2 } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { AssistType, ContentType } from '../../constants/api-codes'
+import { useBookmark } from '../../hooks/useBookmark'
+import { useFacilityDetail } from '../../hooks/useFacilityDetail'
+import { useFacilityMeta } from '../../hooks/useFacilityMeta'
 import { useReviews } from '../../hooks/useReviews'
 import { useAuth } from '../contexts/AuthContext'
 import { ImageWithFallback } from './figma/ImageWithFallback'
-
-interface Facility {
-    content_id: string
-    content_type: string
-    title: string
-    address: string
-    addr2?: string | null
-    tel?: string | null
-    lat?: number | null
-    lng?: number | null
-    image_url?: string | null
-    image_url2?: string | null
-
-    parking?: string | null
-    publictransport?: string | null
-    route?: string | null
-    ticketoffice?: string | null
-    promotion?: string | null
-    wheelchair?: string | null
-    exit?: string | null
-    elevator?: string | null
-    restroom?: string | null
-    auditorium?: string | null
-    room?: string | null
-    handicapetc?: string | null
-    braileblock?: string | null
-    helpdog?: string | null
-    guidehuman?: string | null
-    audioguide?: string | null
-    bigprint?: string | null
-    brailepromotion?: string | null
-    guidesystem?: string | null
-    blindhandicapetc?: string | null
-    signguide?: string | null
-    videoguide?: string | null
-    hearingroom?: string | null
-    hearinghandicapetc?: string | null
-    stroller?: string | null
-    lactationroom?: string | null
-    babysparechair?: string | null
-    infantsfamilyetc?: string | null
-}
 
 export function FacilityDetail() {
     const { id } = useParams<{ id: string }>()
     const { user } = useAuth()
     const [sortBy, setSortBy] = useState<'latest' | 'likes'>('latest')
     const [openAssistKey, setOpenAssistKey] = useState<string | null>(null)
+
     const {
         reviews,
         loading,
@@ -67,8 +27,11 @@ export function FacilityDetail() {
         deleteReply,
     } = useReviews(id || '', user?.id, sortBy)
 
-    // UI 상태 관리
-    const [facility, setFacility] = useState<Facility | null>(null)
+    const { facility, loading: facilityLoading } = useFacilityDetail(id)
+    const { isBookmarked, bookmarkLoading, toggleBookmark } = useBookmark(id, user?.id)
+    const { contentTypeLabel, activeAssistTypes } = useFacilityMeta(facility)
+
+    // 리뷰 관련 UI 상태
     const [newReview, setNewReview] = useState('')
     const [selectedImages, setSelectedImages] = useState<File[]>([])
     const [imagePreviews, setImagePreviews] = useState<string[]>([])
@@ -85,91 +48,7 @@ export function FacilityDetail() {
     const [replyInputs, setReplyInputs] = useState<{ [key: string]: string }>({})
     const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({})
 
-    // 북마크 상태
-    const [isBookmarked, setIsBookmarked] = useState(false)
-    const [bookmarkLoading, setBookmarkLoading] = useState(false)
-
     const fileInputRef = useRef<HTMLInputElement>(null)
-
-    useEffect(() => {
-        if (id) {
-            fetchFacility(id)
-        }
-    }, [id])
-
-    useEffect(() => {
-        if (!id || !user) {
-            setIsBookmarked(false)
-            return
-        }
-
-        fetchBookmark(id, user.id)
-    }, [id, user])
-
-    //장소 정보를 가져옵니다.
-    const fetchFacility = async (placeId: string) => {
-        const { data, error } = await supabase.from('places').select('*').eq('content_id', placeId).single()
-
-        if (error) {
-            console.error(error)
-            return
-        }
-
-        setFacility(data as Facility)
-    }
-
-    // 북마크 정보를 가져옵니다.
-    const fetchBookmark = async (placeId: string, userId: string) => {
-        const { data, error } = await supabase
-            .from('bookmarks')
-            .select('id')
-            .eq('user_id', userId)
-            .eq('place_id', placeId)
-            .maybeSingle()
-
-        if (error) {
-            console.error('북마크 조회 실패:', error)
-            return
-        }
-
-        setIsBookmarked(!!data)
-    }
-
-    // 북마크를 추가/삭제합니다.
-    const toggleBookmark = async () => {
-        if (!user) {
-            alert('로그인이 필요합니다.')
-            return
-        }
-
-        if (!id || bookmarkLoading) return
-
-        setBookmarkLoading(true)
-
-        try {
-            if (isBookmarked) {
-                const { error } = await supabase.from('bookmarks').delete().eq('user_id', user.id).eq('place_id', id)
-
-                if (error) throw error
-
-                setIsBookmarked(false)
-            } else {
-                const { error } = await supabase.from('bookmarks').insert({
-                    user_id: user.id,
-                    place_id: id,
-                })
-
-                if (error) throw error
-
-                setIsBookmarked(true)
-            }
-        } catch (error) {
-            console.error('북마크 처리 실패:', error)
-            alert('북마크 처리 중 오류가 발생했습니다.')
-        } finally {
-            setBookmarkLoading(false)
-        }
-    }
 
     //이미지 선택 시 미리보기를 생성하고 상태에 저장합니다.
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -204,7 +83,6 @@ export function FacilityDetail() {
         setError(null)
 
         try {
-            // 1. 이미지가 선택되었다면 스토리지에 먼저 업로드합니다.
             const uploadedUrls: string[] = []
             for (const file of selectedImages) {
                 const { url, error: uploadError } = await uploadImage(file)
@@ -212,13 +90,11 @@ export function FacilityDetail() {
                 if (url) uploadedUrls.push(url)
             }
 
-            // 2. 작성된 내용과 이미지 URL을 포함하여 리뷰를 생성합니다.
             const result = await addReview(user.id, newReview, ratings, uploadedUrls)
             if (!result.success) {
                 throw new Error(result.error)
             }
 
-            // 3. 성공 시 폼을 초기화합니다.
             setNewReview('')
             setSelectedImages([])
             setImagePreviews([])
@@ -230,7 +106,7 @@ export function FacilityDetail() {
         }
     }
 
-    //  답글 제출 핸들러
+    // 답글 제출 핸들러
     const handleSubmitReply = async (reviewId: string) => {
         const content = replyInputs[reviewId]
         if (!content?.trim() || !user) return
@@ -238,7 +114,6 @@ export function FacilityDetail() {
         const result = await addReply(reviewId, user.id, content)
         if (result.success) {
             setReplyInputs((prev) => ({ ...prev, [reviewId]: '' }))
-            // 답글 작성 성공 시 해당 리뷰의 댓글 섹션을 자동으로 엽니다.
             setExpandedComments((prev) => ({ ...prev, [reviewId]: true }))
         }
     }
@@ -297,35 +172,22 @@ export function FacilityDetail() {
         )
     }
 
-    if (!facility) {
+    if (facilityLoading) {
         return <div className="py-12 text-center">로딩중...</div>
     }
 
-    // content_type 숫자코드 -> 한글
-    const contentTypeLabelMap: Record<string, string> = {
-        [ContentType.TOURISM]: '관광지',
-        [ContentType.LODGING]: '숙박',
-        [ContentType.RESTAURANT]: '음식점',
+    if (!facility) {
+        return <div className="py-12 text-center">장소 정보를 찾을 수 없습니다.</div>
     }
-
-    const contentTypeLabel = contentTypeLabelMap[facility.content_type] ?? facility.content_type
-
-    // AssistType 기준으로 값 있는 편의시설만 추출
-    const activeAssistTypes = Object.entries(AssistType).filter(([key]) => {
-        const value = facility[key as keyof Facility]
-        return value !== null && value !== undefined && value !== ''
-    })
 
     return (
         <div className="space-y-6 pb-20">
-            {/* 뒤로가기 */}
             <Link to="/" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900">
                 <ArrowLeft className="size-5" />
                 <span>목록으로</span>
             </Link>
 
             <div className="rounded-2xl bg-white shadow-lg">
-                {/* 이미지 */}
                 <div className="relative h-96">
                     <ImageWithFallback
                         src={facility.image_url || '/fallback.png'}
@@ -356,9 +218,7 @@ export function FacilityDetail() {
                     </div>
                 </div>
 
-                {/* 내용 */}
                 <div className="space-y-6 p-8">
-                    {/* 기본 정보 */}
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div className="flex items-center gap-3">
                             <MapPin className="size-5 text-blue-600" />
@@ -374,11 +234,10 @@ export function FacilityDetail() {
                         </div>
                     </div>
 
-                    {/* 접근성 */}
                     <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
                         {activeAssistTypes.map(([key, label]) => {
                             const isOpen = openAssistKey === key
-                            const detail = facility[key as keyof Facility]
+                            const detail = facility[key as keyof typeof facility]
 
                             return (
                                 <div key={key} className="relative">
@@ -394,9 +253,18 @@ export function FacilityDetail() {
 
                                     {isOpen && (
                                         <div className="absolute top-full left-6 z-20 mt-3 w-80">
-                                            <div className="relative rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm leading-6 break-words whitespace-pre-line text-gray-700 shadow-lg">
+                                            <div className="relative rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm leading-6 break-words text-gray-700 shadow-lg">
                                                 <div className="absolute -top-2 left-4 h-4 w-4 rotate-45 border-t border-l border-blue-100 bg-white" />
-                                                {detail || '상세 정보 없음'}
+                                                {detail
+                                                    ? String(detail)
+                                                          .split('<br/>')
+                                                          .map((line, i) => (
+                                                              <span key={i}>
+                                                                  {line}
+                                                                  <br />
+                                                              </span>
+                                                          ))
+                                                    : '상세 정보 없음'}
                                             </div>
                                         </div>
                                     )}
@@ -407,11 +275,9 @@ export function FacilityDetail() {
                 </div>
             </div>
 
-            {/* 리뷰 섹션 */}
             <div className="space-y-8 rounded-2xl bg-white p-8 shadow-lg">
                 <h2 className="flex items-center gap-2 text-2xl font-bold">리뷰 ({reviews.length})</h2>
 
-                {/* 평균 평점 요약 섹션 */}
                 {averages.count > 0 && (
                     <div className="grid grid-cols-1 gap-4 rounded-2xl bg-blue-50/50 p-6 md:grid-cols-4">
                         <div className="flex flex-col items-center justify-center border-b border-blue-100 pb-4 md:border-r md:border-b-0 md:pb-0">
@@ -441,7 +307,6 @@ export function FacilityDetail() {
                     </div>
                 )}
 
-                {/* 리뷰 작성 폼 */}
                 {user ? (
                     <form onSubmit={handleSubmitReview} className="space-y-4 rounded-xl bg-gray-50 p-6">
                         <div className="space-y-2">
@@ -460,7 +325,6 @@ export function FacilityDetail() {
                             />
                         </div>
 
-                        {/* 별점 선택 영역 */}
                         <div className="grid grid-cols-1 gap-6 rounded-lg border border-gray-200 bg-white p-4 md:grid-cols-3">
                             <StarRatingInput
                                 label="진입로"
@@ -479,7 +343,6 @@ export function FacilityDetail() {
                             />
                         </div>
 
-                        {/* 이미지 프리뷰 */}
                         {imagePreviews.length > 0 && (
                             <div className="flex flex-wrap gap-2">
                                 {imagePreviews.map((url, index) => (
@@ -545,9 +408,7 @@ export function FacilityDetail() {
                     </div>
                 )}
 
-                {/* 리뷰 목록 섹션 */}
                 <div className="space-y-6">
-                    {/* 정렬 버튼 영역 */}
                     <div className="flex items-center justify-between">
                         <h2 className="flex items-center gap-2 text-2xl font-bold">리뷰 ({reviews.length})</h2>
                         <div className="flex gap-2">
@@ -594,7 +455,6 @@ export function FacilityDetail() {
                                     </span>
                                 </div>
 
-                                {/* 별점 표시 */}
                                 <div className="flex flex-wrap gap-4 text-xs font-medium text-gray-500">
                                     <div className="flex items-center gap-1">
                                         <span className="rounded bg-blue-50 px-2 py-0.5 text-blue-600">진입로</span>
@@ -647,7 +507,6 @@ export function FacilityDetail() {
                                     </div>
                                 )}
 
-                                {/* 좋아요 및 답글 토글 버튼 */}
                                 <div className="flex flex-col items-start gap-3 pt-2">
                                     <button
                                         onClick={() => user && toggleLikeReview(review.id, user.id)}
@@ -662,7 +521,6 @@ export function FacilityDetail() {
                                         <span>좋아요 {review.likes || 0}</span>
                                     </button>
 
-                                    {/* 답글 토글 버튼 */}
                                     {review.replies && review.replies.length > 0 && (
                                         <button
                                             onClick={() => toggleComments(review.id)}
@@ -675,7 +533,6 @@ export function FacilityDetail() {
                                     )}
                                 </div>
 
-                                {/* 답글 목록 섹션 (토글 가능) */}
                                 {expandedComments[review.id] && review.replies && review.replies.length > 0 && (
                                     <div className="animate-in fade-in slide-in-from-top-2 mt-4 ml-4 space-y-3 border-l-2 border-gray-100 pl-4 duration-200">
                                         {review.replies.map((reply) => (
@@ -705,7 +562,6 @@ export function FacilityDetail() {
                                     </div>
                                 )}
 
-                                {/* 답글 입력창 (항상 표시, 로그인 시) */}
                                 {user && (
                                     <div className="mt-4 ml-4 border-l-2 border-gray-100 pl-4">
                                         <div className="flex gap-2">
