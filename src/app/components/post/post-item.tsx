@@ -12,7 +12,9 @@ import LikePostButton from './like-post-button'
 
 export default function PostItem(post: Post & { isDetail?: boolean }) {
     const { user } = useAuth()
-    const { data: nickname } = useUserNickname(post.user_id)  // ✅ 추가
+    const { data: nickname } = useUserNickname(post.user_id) // ✅ 추가
+    console.log('post.user_id:', post.user_id) // ✅ 여기에 추가
+    console.log('nickname:', nickname) // ✅ 여기에 추가
     const isLiked = post.post_likes.some((like) => like.user_id === user?.id)
 
     return (
@@ -27,7 +29,7 @@ export default function PostItem(post: Post & { isDetail?: boolean }) {
                         className="h-10 w-10 rounded-full object-cover"
                     />
                     <div>
-                        <div className="font-bold hover:underline">{nickname ?? '알 수 없음'}</div>  {/* ✅ 수정 */}
+                        <div className="font-bold hover:underline">{nickname ?? '알 수 없음'}</div> {/* ✅ 수정 */}
                         <div className="text-muted-foreground text-sm">
                             {post.created_at ? formatTimeAgo(post.created_at) : ''}
                         </div>
