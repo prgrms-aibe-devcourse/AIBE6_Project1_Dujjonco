@@ -2,6 +2,7 @@ import { useAuth } from '@/app/contexts/AuthContext'
 import { Carousel, CarouselContent, CarouselItem } from '@/app/ui2/carousel2'
 import { formatTimeAgo } from '@/app/util/time'
 import defaultAvatar from '@/assets/default-avatar.png'
+import { useUserNickname } from '@/hooks/queries/use-user-nickname'
 import type { Post } from '@/types'
 import { MessageCircle } from 'lucide-react'
 import { Link } from 'react-router'
@@ -11,7 +12,9 @@ import LikePostButton from './like-post-button'
 
 export default function PostItem(post: Post & { isDetail?: boolean }) {
     const { user } = useAuth()
+    const { data: nickname } = useUserNickname(post.user_id)  // ✅ 추가
     const isLiked = post.post_likes.some((like) => like.user_id === user?.id)
+
     return (
         <div className={`flex flex-col gap-4 pb-8 ${!post.isDetail && 'border-b'}`}>
             {/* 1. 유저 정보, 수정/삭제 버튼 */}
@@ -20,11 +23,11 @@ export default function PostItem(post: Post & { isDetail?: boolean }) {
                 <div className="flex items-start gap-4">
                     <img
                         src={defaultAvatar}
-                        alt={`${user?.nickname}의 프로필 이미지`}
+                        alt={`${nickname}의 프로필 이미지`}
                         className="h-10 w-10 rounded-full object-cover"
                     />
                     <div>
-                        <div className="font-bold hover:underline">{user?.nickname ?? '알 수 없음'}</div>
+                        <div className="font-bold hover:underline">{nickname ?? '알 수 없음'}</div>  {/* ✅ 수정 */}
                         <div className="text-muted-foreground text-sm">
                             {post.created_at ? formatTimeAgo(post.created_at) : ''}
                         </div>
