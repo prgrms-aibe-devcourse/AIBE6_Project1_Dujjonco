@@ -263,6 +263,8 @@ export function FacilityDetail() {
         await deleteReply(replyId, user.id)
     }
 
+    const facilityDetail = () => {}
+
     // 별점 선택 컴포넌트
     const StarRatingInput = ({
         label,
@@ -394,9 +396,18 @@ export function FacilityDetail() {
 
                                     {isOpen && (
                                         <div className="absolute top-full left-6 z-20 mt-3 w-80">
-                                            <div className="relative rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm leading-6 break-words whitespace-pre-line text-gray-700 shadow-lg">
+                                            <div className="relative rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm leading-6 break-words text-gray-700 shadow-lg">
                                                 <div className="absolute -top-2 left-4 h-4 w-4 rotate-45 border-t border-l border-blue-100 bg-white" />
-                                                {detail || '상세 정보 없음'}
+                                                {detail
+                                                    ? String(detail)
+                                                          .split('<br/>')
+                                                          .map((line, i) => (
+                                                              <span key={i}>
+                                                                  {line}
+                                                                  <br />
+                                                              </span>
+                                                          ))
+                                                    : '상세 정보 없음'}
                                             </div>
                                         </div>
                                     )}
