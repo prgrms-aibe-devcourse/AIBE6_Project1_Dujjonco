@@ -29,5 +29,5 @@
             "@/*": ["./src/*"]
         }
     },
-    "include": ["src", "supabase/api"]
+    "include": ["src", "supabase/api", "src/query/supabase.ts"]
 }

@@ -1,7 +1,7 @@
 import { Accessibility, ArrowDownUp, CircleParking, DoorOpen, Heart, MapPin } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { AreaCode, ContentType, getActiveIcons } from '../../../constants/api-codes'
+import { AreaCode, ContentType, getActiveIcons } from '../../constants/api-codes'
 import { usePlaces } from '../../hooks/usePlaces'
 import { ImageWithFallback } from './figma/ImageWithFallback'
 

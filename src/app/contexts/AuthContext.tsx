@@ -1,6 +1,6 @@
+import { supabase } from '@/supabase/supabase'
 import type { ReactNode } from 'react'
 import { createContext, useContext, useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
 import type { User } from '../services/auth'
 import { authService } from '../services/auth'
 

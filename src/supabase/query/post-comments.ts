@@ -1,4 +1,4 @@
-import { supabase } from '@/app/lib/supabase'
+import { supabase } from '../supabase'
 
 export async function fetchComments(postId: string) {
     const { data, error } = await supabase

@@ -8,7 +8,7 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-} from 'components/ui/alert-dialog'
+} from '../ui/alert-dialog'
 
 export default function AlertModal() {
     const store = useAlertModal()
