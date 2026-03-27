@@ -1,9 +1,9 @@
-import { Accessibility, LogIn, MessageSquare, SunIcon, User } from 'lucide-react'
+import { Accessibility, LogIn, LogOut, MessageSquare, SunIcon, User } from 'lucide-react'
 import { Link } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
 
 export function Header() {
-    const { user } = useAuth()
+    const { user, logout } = useAuth()
 
     return (
         <header className="border-b border-blue-100 bg-white shadow-sm">
@@ -31,13 +31,22 @@ export function Header() {
                         </Link>
 
                         {user ? (
-                            <Link
-                                to="/mypage"
-                                className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-2 text-white transition-all hover:from-blue-600 hover:to-indigo-700"
-                            >
-                                <User className="size-5" />
-                                <span>{user.name}</span>
-                            </Link>
+                            <>
+                                <Link
+                                    to="/mypage"
+                                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-2 text-white transition-all hover:from-blue-600 hover:to-indigo-700"
+                                >
+                                    <User className="size-5" />
+                                    <span>{user.name}</span>
+                                </Link>
+                                <button
+                                    onClick={logout}
+                                    className="flex cursor-pointer items-center gap-2 rounded-lg border-2 border-gray-500 px-4 py-2 text-gray-600 transition-colors hover:bg-gray-200"
+                                >
+                                    <LogOut className="size-5" />
+                                    <span>로그아웃</span>
+                                </button>
+                            </>
                         ) : (
                             <>
                                 <Link
