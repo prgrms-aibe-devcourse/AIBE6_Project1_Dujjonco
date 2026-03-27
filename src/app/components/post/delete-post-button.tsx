@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/app/ui2/button2'
 import { useDeletePost } from '@/hooks/mutations/post/use-delete-post'
 import { useOpenAlertModal } from '@/store/alert-modal'
 import { useNavigate } from 'react-router'

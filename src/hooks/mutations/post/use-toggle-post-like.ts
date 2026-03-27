@@ -1,7 +1,7 @@
-import { togglePostLike } from '@/api/post'
 import { queryKeys } from '@/hooks/queries/query-keys'
 import type { Post, UseMutationCallback } from '@/types'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { togglePostLike } from 'supabase/api/post'
 
 export default function useTogglePostLike(postId: string, callbacks?: UseMutationCallback) {
     const queryClient = useQueryClient()

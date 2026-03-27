@@ -1,6 +1,6 @@
-import { createComment } from '@/api/post-comments'
 import type { UseMutationCallback } from '@/types'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { createComment } from 'supabase/api/post-comments'
 
 export function useCreateComment(postId: string, callbacks?: UseMutationCallback) {
     const queryClient = useQueryClient()

@@ -1,5 +1,5 @@
-import { fetchPost } from '@/api/post'
 import { useQuery } from '@tanstack/react-query'
+import { fetchPost } from 'supabase/api/post'
 import { queryKeys } from './query-keys'
 
 export function usePostData(id: string) {

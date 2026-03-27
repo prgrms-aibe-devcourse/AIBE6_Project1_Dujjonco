@@ -1,3 +1,4 @@
+import { useAlertModal } from '@/store/alert-modal'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -7,8 +8,7 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { useAlertModal } from '@/store/alert-modal'
+} from 'components/ui/alert-dialog'
 
 export default function AlertModal() {
     const store = useAlertModal()

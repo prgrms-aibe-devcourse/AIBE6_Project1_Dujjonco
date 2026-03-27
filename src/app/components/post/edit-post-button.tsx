@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/app/ui2/button2'
 import { useOpenEditPostModal } from '@/store/post-editor-modal'
 import type { Post } from '@/types'
 
