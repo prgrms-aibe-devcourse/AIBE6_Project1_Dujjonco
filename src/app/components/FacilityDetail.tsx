@@ -138,8 +138,6 @@ export function FacilityDetail() {
         await deleteReply(replyId, user.id)
     }
 
-    const facilityDetail = () => {}
-
     // 별점 선택 컴포넌트
     const StarRatingInput = ({
         label,

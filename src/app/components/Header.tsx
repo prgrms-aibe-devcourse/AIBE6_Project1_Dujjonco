@@ -14,7 +14,7 @@ export function Header() {
                             <Accessibility className="size-6 text-white" />
                         </div>
                         <div>
-                            <h1 className="text-2xl text-gray-800">배리어플레이스</h1>
+                            <h1 className="text-2xl text-gray-800">FreeWay</h1>
                             <p className="text-sm text-gray-600">모두를 위한 접근 가능한 공간</p>
                         </div>
                     </Link>
