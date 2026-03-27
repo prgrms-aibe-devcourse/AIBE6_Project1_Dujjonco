@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase'
+import { supabase } from '@/supabase/supabase'
 
 export interface User {
     id: string
@@ -78,12 +78,7 @@ class AuthService {
         return { success: true, message: '프로필이 업데이트되었습니다.' }
     }
 
-    mapUser(user: {
-        id: string
-        email?: string
-        user_metadata?: Record<string, string>
-        created_at?: string
-    }): User {
+    mapUser(user: { id: string; email?: string; user_metadata?: Record<string, string>; created_at?: string }): User {
         return {
             id: user.id,
             email: user.email ?? '',

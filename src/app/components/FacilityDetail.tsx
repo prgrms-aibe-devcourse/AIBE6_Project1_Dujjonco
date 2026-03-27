@@ -1,10 +1,10 @@
+import { supabase } from '@/supabase/supabase'
 import { Accessibility, ArrowLeft, Camera, Heart, MapPin, Phone, Send, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { AssistType, ContentType } from '../../../constants/api-codes'
+import { AssistType, ContentType } from '../../constants/api-codes'
 import { useReviews } from '../../hooks/useReviews'
 import { useAuth } from '../contexts/AuthContext'
-import { supabase } from '../lib/supabase'
 import { ImageWithFallback } from './figma/ImageWithFallback'
 
 interface Facility {

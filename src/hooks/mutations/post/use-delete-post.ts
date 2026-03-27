@@ -1,7 +1,7 @@
 import { queryKeys } from '@/hooks/queries/query-keys'
+import { deletePost } from '@/supabase/query/post'
 import type { UseMutationCallback } from '@/types'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { deletePost } from 'supabase/api/post'
 
 export function useDeletePost(callbacks?: UseMutationCallback) {
     const queryClient = useQueryClient()
