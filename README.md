@@ -1,6 +1,8 @@
-# 배포관련
-[개발 테스트 링크](https://freeway-chi.vercel.app/)
-[배포용 레포](https://github.com/hoehoeabi/freeway/tree/develop)
+  # 배포관련
+  - [개발 테스트 링크](https://freeway-chi.vercel.app/)<br>
+  - [배포용 레포](https://github.com/hoehoeabi/freeway/tree/develop)
+
+  ---
   
   # 배리어플레이스
 
