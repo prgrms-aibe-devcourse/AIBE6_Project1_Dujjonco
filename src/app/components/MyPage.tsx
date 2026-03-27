@@ -4,7 +4,7 @@ import { fetchReviewCountByUser } from '@/supabase/query/review'
 import { useQuery } from '@tanstack/react-query'
 import { Accessibility, Calendar, Edit2, LogOut, Mail, Save, User, X } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
 
 export function MyPage() {
@@ -227,10 +227,13 @@ export function MyPage() {
                         <div className="mb-2 text-3xl">{reviewCount}</div>
                         <div className="text-sm text-gray-600">작성한 리뷰</div>
                     </div>
-                    <div className="rounded-xl bg-white p-6 text-center shadow">
-                        <div className="mb-2 text-3xl">{bookmarkCount}</div>
-                        <div className="text-sm text-gray-600">저장한 장소</div>
-                    </div>
+                    <Link to="/bookmark" className="block">
+                        <div className="rounded-xl bg-white p-6 text-center shadow transition-colors hover:bg-gray-200">
+                            <div className="mb-2 text-3xl">{bookmarkCount}</div>
+                            <div className="text-sm text-gray-600">저장한 장소</div>
+                        </div>
+                    </Link>
+
                     <div className="rounded-xl bg-white p-6 text-center shadow">
                         <div className="mb-2 text-3xl">{postCount}</div>
                         <div className="text-sm text-gray-600">작성한 게시물</div>
