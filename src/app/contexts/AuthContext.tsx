@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-import { createContext, useContext, useEffect, useState } from 'react'
-import type { ReactNode } from 'react'
-import { supabase } from '../lib/supabase'
-=======
 import { supabase } from '@/supabase/supabase'
 import type { ReactNode } from 'react'
 import { createContext, useContext, useEffect, useState } from 'react'
->>>>>>> develop
 import type { User } from '../services/auth'
 import { authService } from '../services/auth'
 
@@ -30,15 +24,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null)
 
     useEffect(() => {
-<<<<<<< HEAD
-        // 초기 세션 로드
-        authService.getCurrentUser().then(setUser)
-
-        // Supabase 인증 상태 변화 감지
-=======
         // onAuthStateChange: 앱 시작(INITIAL_SESSION), 로그인, 로그아웃 등
         // 인증 상태가 바뀔 때마다 자동으로 실행됨
->>>>>>> develop
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange((event, session) => {

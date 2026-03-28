@@ -86,17 +86,14 @@ export function useBookmarks(userId?: string) {
             setBookmarks(new Set())
             return
         }
-        fetchBookmarks()
+        fetchBookmarks(userId)
     }, [userId])
 
-    async function fetchBookmarks() {
-        if (!userId) return
-
-        const { data, error } = await supabase.from('bookmarks').select('place_id').eq('user_id', userId)
+    async function fetchBookmarks(uid: string) {
+        const { data, error } = await supabase.from('bookmarks').select('place_id').eq('user_id', uid)
 
         if (!error && data) {
-            const ids = data.map((b) => b.place_id).filter((id): id is string => !!id)
-            setBookmarks(new Set(ids))
+            setBookmarks(new Set(data.map((b) => b.place_id).filter((id): id is string => id !== null)))
         }
     }
 
@@ -141,4 +138,3 @@ export function useBookmarks(userId?: string) {
 
     return { bookmarks, loadingId, toggleBookmark }
 }
-

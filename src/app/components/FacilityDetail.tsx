@@ -33,8 +33,6 @@ export function FacilityDetail() {
     const { isBookmarked, bookmarkLoading, toggleBookmark } = useBookmark(id, user?.id)
     const { contentTypeLabel, activeAssistTypes } = useFacilityMeta(facility)
 
-    // 별점 선택 컴포넌트와 별점 상태, 제출 핸들러, 답글 핸들러 등은 모두 review 폴더의 개별 컴포넌트로 이동되었습니다.
-
     if (facilityLoading) {
         return <div className="py-12 text-center">로딩중...</div>
     }
@@ -138,19 +136,8 @@ export function FacilityDetail() {
                 </div>
             </div>
 
-<<<<<<< HEAD
             <div className="space-y-8 rounded-2xl bg-white p-8 shadow-lg">
                 <ReviewAverages {...averages} />
-=======
-            <div className="space-y-12 rounded-2xl bg-white p-8 shadow-lg">
-                <ReviewAverages
-                    total={averages.total}
-                    entrance={averages.entrance}
-                    interior={averages.interior}
-                    facility={averages.facility}
-                    count={averages.count}
-                />
->>>>>>> origin/develop
 
                 <ReviewForm user={user} onSubmit={addReview} onUploadImage={uploadImage} />
 
