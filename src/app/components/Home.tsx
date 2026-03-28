@@ -2,7 +2,9 @@ import { Accessibility, ArrowDownUp, CircleParking, DoorOpen, Heart, MapPin, Sta
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { AreaCode, ContentType, getActiveIcons } from '../../constants/api-codes'
+import { useBookmarks } from '../../hooks/useBookmark'
 import { usePlaces } from '../../hooks/usePlaces'
+import { useAuth } from '../contexts/AuthContext'
 import { ImageWithFallback } from './figma/ImageWithFallback'
 
 const CATEGORY_MAP: Record<string, string> = {
@@ -33,10 +35,102 @@ const LOCATION_MAP: Record<string, string> = {
     제주: AreaCode.JEJU,
 }
 
-// review 추가
 type SortType = 'latest' | 'rating' | 'review'
 
+interface Place {
+    content_id: string
+    title: string
+    address: string
+    image_url: string
+    avg_score?: number
+    review_count?: number
+    [key: string]: string | number | null | undefined
+}
+
+function PlaceCard({
+    place,
+    isBookmarked,
+    bookmarkLoading,
+    onToggle,
+}: {
+    place: Place
+    isBookmarked: boolean
+    bookmarkLoading: boolean
+    onToggle: (placeId: string) => void
+}) {
+    return (
+        <Link
+            to={`/facility/${place.content_id}`}
+            className="group transform overflow-hidden rounded-xl bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-xl"
+        >
+            <div className="relative h-56 overflow-hidden">
+                <ImageWithFallback
+                    src={place.image_url}
+                    alt={place.title}
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                />
+                <button
+                    className="absolute top-4 right-4 rounded-full bg-white/90 p-2 transition-colors hover:bg-white disabled:opacity-50"
+                    onClick={(e) => {
+                        e.preventDefault()
+                        onToggle(place.content_id)
+                    }}
+                    disabled={bookmarkLoading}
+                >
+                    <Heart
+                        className={`size-5 transition-colors ${
+                            isBookmarked
+                                ? 'fill-blue-500 text-blue-500'
+                                : 'text-blue-500'
+                        }`}
+                    />
+                </button>
+            </div>
+
+            <div className="space-y-3 p-5">
+                <div>
+                    <div className="flex items-center justify-between">
+                        <h3 className="mb-1 text-xl">{place.title}</h3>
+                        <div className="flex items-center gap-1 text-sm text-yellow-500">
+                            <Star className="size-4 fill-yellow-400" />
+                            <span>
+                                {place.avg_score !== undefined
+                                    ? place.avg_score.toFixed(2)
+                                    : '0.00'}
+                            </span>
+                            <span className="text-xs text-gray-400">
+                                ({place.review_count ?? 0})
+                            </span>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <MapPin className="size-4" />
+                        <span>{place.address}</span>
+                    </div>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5">
+                    {getActiveIcons(place)
+                        .slice(0, 4)
+                        .map(([key, { icon: Icon, label }]) => (
+                            <span
+                                key={key}
+                                className="flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 text-xs text-blue-600"
+                            >
+                                <Icon className="size-3" />
+                                {label}
+                            </span>
+                        ))}
+                </div>
+            </div>
+        </Link>
+    )
+}
+
 export function Home() {
+    const { user } = useAuth()
+    const { bookmarks, loadingId, toggleBookmark } = useBookmarks(user?.id)
+
     const [selectedCategory, setSelectedCategory] = useState<string>('전체')
     const [selectedLocation, setSelectedLocation] = useState<string>('전체')
     const [selectedFeatures, setSelectedFeatures] = useState({
@@ -188,7 +282,6 @@ export function Home() {
                 >
                     평점순
                 </button>
-                {/* 리뷰많은순 추가 */}
                 <button
                     onClick={() => { setSortType('review'); setPage(1) }}
                     className={`rounded-full px-4 py-2 text-sm ${
@@ -210,61 +303,13 @@ export function Home() {
             {!loading && (
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {places.map((place) => (
-                        <Link
+                        <PlaceCard
                             key={place.content_id}
-                            to={`/facility/${place.content_id}`}
-                            className="group transform overflow-hidden rounded-xl bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-xl"
-                        >
-                            <div className="relative h-56 overflow-hidden">
-                                <ImageWithFallback
-                                    src={place.image_url}
-                                    alt={place.title}
-                                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                                />
-                                <button className="absolute top-4 right-4 rounded-full bg-white/90 p-2 transition-colors hover:bg-white">
-                                    <Heart className="size-5 text-blue-500" />
-                                </button>
-                            </div>
-
-                            <div className="space-y-3 p-5">
-                                <div>
-                                    {/* 가게명 + 평균 별점 */}
-                                    <div className="flex items-center justify-between">
-                                        <h3 className="mb-1 text-xl">{place.title}</h3>
-                                        <div className="flex items-center gap-1 text-sm text-yellow-500">
-                                            <Star className="size-4 fill-yellow-400" />
-                                            <span>
-                                                {place.avg_score !== undefined
-                                                    ? place.avg_score.toFixed(2)
-                                                    : '0.00'}
-                                            </span>
-                                            <span className="text-xs text-gray-400">
-                                                ({place.review_count ?? 0})
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                                        <MapPin className="size-4" />
-                                        <span>{place.address}</span>
-                                    </div>
-                                </div>
-
-                                {/* 배리어프리 아이콘 */}
-                                <div className="flex flex-wrap gap-1.5">
-                                    {getActiveIcons(place)
-                                        .slice(0, 4)
-                                        .map(([key, { icon: Icon, label }]) => (
-                                            <span
-                                                key={key}
-                                                className="flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 text-xs text-blue-600"
-                                            >
-                                                <Icon className="size-3" />
-                                                {label}
-                                            </span>
-                                        ))}
-                                </div>
-                            </div>
-                        </Link>
+                            place={place}
+                            isBookmarked={bookmarks.has(place.content_id)}
+                            bookmarkLoading={loadingId === place.content_id}
+                            onToggle={toggleBookmark}
+                        />
                     ))}
                 </div>
             )}

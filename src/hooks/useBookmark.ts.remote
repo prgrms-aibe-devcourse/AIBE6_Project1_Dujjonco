@@ -1,0 +1,142 @@
+﻿import { supabase } from '@/supabase/supabase'
+import { useCallback, useEffect, useState } from 'react'
+
+// ?⑥씪 ?μ냼 遺곷쭏??(?곸꽭 ?섏씠吏??
+export function useBookmark(placeId?: string, userId?: string) {
+    const [isBookmarked, setIsBookmarked] = useState(false)
+    const [bookmarkLoading, setBookmarkLoading] = useState(false)
+
+    const fetchBookmark = useCallback(async () => {
+        if (!placeId || !userId) {
+            setIsBookmarked(false)
+            return
+        }
+
+        const { data, error } = await supabase
+            .from('bookmarks')
+            .select('id')
+            .eq('user_id', userId)
+            .eq('place_id', placeId)
+            .maybeSingle()
+
+        if (error) {
+            console.error('遺곷쭏??議고쉶 ?ㅽ뙣:', error)
+            return
+        }
+
+        setIsBookmarked(!!data)
+    }, [placeId, userId])
+
+    useEffect(() => {
+        fetchBookmark()
+    }, [fetchBookmark])
+
+    const toggleBookmark = useCallback(async () => {
+        if (!userId) {
+            alert('濡쒓렇?몄씠 ?꾩슂?⑸땲??')
+            return
+        }
+
+        if (!placeId || bookmarkLoading) return
+
+        setBookmarkLoading(true)
+
+        try {
+            if (isBookmarked) {
+                const { error } = await supabase
+                    .from('bookmarks')
+                    .delete()
+                    .eq('user_id', userId)
+                    .eq('place_id', placeId)
+
+                if (error) throw error
+                setIsBookmarked(false)
+            } else {
+                const { error } = await supabase.from('bookmarks').insert({
+                    user_id: userId,
+                    place_id: placeId,
+                })
+
+                if (error) throw error
+                setIsBookmarked(true)
+            }
+        } catch (error) {
+            console.error('遺곷쭏??泥섎━ ?ㅽ뙣:', error)
+            alert('遺곷쭏??泥섎━ 以??ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.')
+        } finally {
+            setBookmarkLoading(false)
+        }
+    }, [placeId, userId, bookmarkLoading, isBookmarked])
+
+    return {
+        isBookmarked,
+        bookmarkLoading,
+        toggleBookmark,
+        refetchBookmark: fetchBookmark,
+    }
+}
+
+// ?꾩껜 遺곷쭏??紐⑸줉 (???섏씠吏??- DB 荑쇰━ 1踰덉쑝濡?泥섎━)
+export function useBookmarks(userId?: string) {
+    const [bookmarks, setBookmarks] = useState<Set<string>>(new Set())
+    const [loadingId, setLoadingId] = useState<string | null>(null)
+
+    useEffect(() => {
+        if (!userId) {
+            setBookmarks(new Set())
+            return
+        }
+        fetchBookmarks()
+    }, [userId])
+
+    async function fetchBookmarks() {
+        const { data, error } = await supabase
+            .from('bookmarks')
+            .select('place_id')
+            .eq('user_id', userId)
+
+        if (!error && data) {
+            setBookmarks(new Set(data.map((b) => b.place_id)))
+        }
+    }
+
+    const toggleBookmark = useCallback(async (placeId: string) => {
+        if (!userId) {
+            alert('濡쒓렇?몄씠 ?꾩슂?⑸땲??')
+            return
+        }
+        if (loadingId) return
+        setLoadingId(placeId)
+
+        try {
+            if (bookmarks.has(placeId)) {
+                const { error } = await supabase
+                    .from('bookmarks')
+                    .delete()
+                    .eq('user_id', userId)
+                    .eq('place_id', placeId)
+
+                if (error) throw error
+                setBookmarks((prev) => {
+                    const next = new Set(prev)
+                    next.delete(placeId)
+                    return next
+                })
+            } else {
+                const { error } = await supabase
+                    .from('bookmarks')
+                    .insert({ user_id: userId, place_id: placeId })
+
+                if (error) throw error
+                setBookmarks((prev) => new Set([...prev, placeId]))
+            }
+        } catch (error) {
+            console.error('遺곷쭏??泥섎━ ?ㅽ뙣:', error)
+            alert('遺곷쭏??泥섎━ 以??ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.')
+        } finally {
+            setLoadingId(null)
+        }
+    }, [userId, loadingId, bookmarks])
+
+    return { bookmarks, loadingId, toggleBookmark }
+}

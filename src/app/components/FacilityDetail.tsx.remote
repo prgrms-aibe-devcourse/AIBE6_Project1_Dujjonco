@@ -1,10 +1,11 @@
+﻿import UserNickname from '@/app/components/UserNickname'
 import { ArrowLeft, Heart, MapPin, Phone } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { useBookmark } from '../../hooks/useBookmark'
 import { useFacilityDetail } from '../../hooks/useFacilityDetail'
 import { useFacilityMeta } from '../../hooks/useFacilityMeta'
-import { useReviews } from '../../hooks/useReviews'
+import { useReviews } from '../../hooks/review/useReviews'
 import { useAuth } from '../contexts/AuthContext'
 import { ImageWithFallback } from './figma/ImageWithFallback'
 import { ReviewAverages } from './review/ReviewAverages'
@@ -33,20 +34,21 @@ export function FacilityDetail() {
     const { isBookmarked, bookmarkLoading, toggleBookmark } = useBookmark(id, user?.id)
     const { contentTypeLabel, activeAssistTypes } = useFacilityMeta(facility)
 
+    // 蹂꾩젏 ?좏깮 而댄룷?뚰듃? 蹂꾩젏 ?곹깭, ?쒖텧 ?몃뱾?? ?듦? ?몃뱾???깆? 紐⑤몢 review ?대뜑??媛쒕퀎 而댄룷?뚰듃濡??대룞?섏뿀?듬땲??
 
     if (facilityLoading) {
-        return <div className="py-12 text-center">로딩중...</div>
+        return <div className="py-12 text-center">濡쒕뵫以?..</div>
     }
 
     if (!facility) {
-        return <div className="py-12 text-center">장소 정보를 찾을 수 없습니다.</div>
+        return <div className="py-12 text-center">?μ냼 ?뺣낫瑜?李얠쓣 ???놁뒿?덈떎.</div>
     }
 
     return (
         <div className="space-y-6 pb-20">
             <Link to="/" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900">
                 <ArrowLeft className="size-5" />
-                <span>목록으로</span>
+                <span>紐⑸줉?쇰줈</span>
             </Link>
 
             <div className="rounded-2xl bg-white shadow-lg">
@@ -64,8 +66,8 @@ export function FacilityDetail() {
                         onClick={toggleBookmark}
                         disabled={bookmarkLoading}
                         className="absolute top-4 right-4 z-10 flex size-12 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-70"
-                        aria-label={isBookmarked ? '북마크 해제' : '북마크 추가'}
-                        title={isBookmarked ? '북마크 해제' : '북마크 추가'}
+                        aria-label={isBookmarked ? '遺곷쭏???댁젣' : '遺곷쭏??異붽?'}
+                        title={isBookmarked ? '遺곷쭏???댁젣' : '遺곷쭏??異붽?'}
                     >
                         <Heart
                             className={`size-6 transition-colors ${
@@ -92,12 +94,12 @@ export function FacilityDetail() {
 
                         <div className="flex items-center gap-3">
                             <Phone className="size-5 text-orange-600" />
-                            <p>{facility.tel?.trim() || '업체로부터 제공받지 못함'}</p>
+                            <p>{facility.tel?.trim() || '?낆껜濡쒕????쒓났諛쏆? 紐삵븿'}</p>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-                        {activeAssistTypes.map(([key, label]: [string, string]) => {
+                        {activeAssistTypes.map(([key, label]) => {
                             const isOpen = openAssistKey === key
                             const detail = facility[key as keyof typeof facility]
 
@@ -126,7 +128,7 @@ export function FacilityDetail() {
                                                                   <br />
                                                               </span>
                                                           ))
-                                                    : '상세 정보 없음'}
+                                                    : '?곸꽭 ?뺣낫 ?놁쓬'}
                                             </div>
                                         </div>
                                     )}
@@ -137,8 +139,14 @@ export function FacilityDetail() {
                 </div>
             </div>
 
-            <div className="space-y-8 rounded-2xl bg-white p-8 shadow-lg">
-                <ReviewAverages {...averages} />
+            <div className="space-y-12 rounded-2xl bg-white p-8 shadow-lg">
+                <ReviewAverages
+                    total={averages.total}
+                    entrance={averages.entrance}
+                    interior={averages.interior}
+                    facility={averages.facility}
+                    count={averages.count}
+                />
 
                 <ReviewForm user={user} onSubmit={addReview} onUploadImage={uploadImage} />
 

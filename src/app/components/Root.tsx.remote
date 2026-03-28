@@ -1,4 +1,4 @@
-import ModalProvider from '@/provider/modal-provider'
+﻿import ModalProvider from '@/provider/modal-provider'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { Outlet } from 'react-router'
