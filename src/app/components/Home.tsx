@@ -61,7 +61,7 @@ function PlaceCard({
     return (
         <Link
             to={`/facility/${place.content_id}`}
-            className="group transform overflow-hidden rounded-xl bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-xl"
+            className="group transform overflow-hidden rounded-xl bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-xl dark:bg-gray-800"
         >
             <div className="relative h-56 overflow-hidden">
                 <ImageWithFallback
@@ -79,9 +79,7 @@ function PlaceCard({
                 >
                     <Heart
                         className={`size-5 transition-colors ${
-                            isBookmarked
-                                ? 'fill-blue-500 text-blue-500'
-                                : 'text-blue-500'
+                            isBookmarked ? 'fill-blue-500 text-blue-500' : 'text-blue-500'
                         }`}
                     />
                 </button>
@@ -90,17 +88,11 @@ function PlaceCard({
             <div className="space-y-3 p-5">
                 <div>
                     <div className="flex items-center justify-between">
-                        <h3 className="mb-1 text-xl">{place.title}</h3>
+                        <h3 className="mb-1 text-xl dark:text-white">{place.title}</h3>
                         <div className="flex items-center gap-1 text-sm text-yellow-500">
                             <Star className="size-4 fill-yellow-400" />
-                            <span>
-                                {place.avg_score !== undefined
-                                    ? place.avg_score.toFixed(2)
-                                    : '0.00'}
-                            </span>
-                            <span className="text-xs text-gray-400">
-                                ({place.review_count ?? 0})
-                            </span>
+                            <span>{place.avg_score !== undefined ? place.avg_score.toFixed(2) : '0.00'}</span>
+                            <span className="text-xs text-gray-400">({place.review_count ?? 0})</span>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -189,19 +181,22 @@ export function Home() {
             </div>
 
             {/* Filters */}
-            <div className="space-y-4 rounded-xl bg-white p-6 shadow-sm">
+            <div className="space-y-4 rounded-xl bg-white p-6 shadow-sm dark:bg-gray-800">
                 {/* 카테고리 */}
                 <div>
-                    <label className="mb-2 block text-sm text-gray-700">카테고리</label>
+                    <label className="mb-2 block text-sm text-gray-700 dark:text-gray-300">카테고리</label>
                     <div className="flex flex-wrap gap-2">
                         {categories.map((category) => (
                             <button
                                 key={category}
-                                onClick={() => { setSelectedCategory(category); setPage(1) }}
+                                onClick={() => {
+                                    setSelectedCategory(category)
+                                    setPage(1)
+                                }}
                                 className={`rounded-full px-4 py-2 text-sm transition-colors ${
                                     selectedCategory === category
                                         ? 'bg-blue-500 text-white'
-                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
                                 }`}
                             >
                                 {category}
@@ -212,7 +207,7 @@ export function Home() {
 
                 {/* 배리어프리 퀵태그 */}
                 <div>
-                    <label className="mb-2 block text-sm text-gray-700">편의시설 퀵태그</label>
+                    <label className="mb-2 block text-sm text-gray-700 dark:text-gray-300">편의시설 퀵태그</label>
                     <div className="flex flex-wrap gap-2">
                         {accessibilityFeatures.map((feature) => {
                             const Icon = feature.icon
@@ -224,7 +219,7 @@ export function Home() {
                                     className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm transition-all ${
                                         isSelected
                                             ? 'bg-purple-500 text-white shadow-md'
-                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
                                     }`}
                                 >
                                     <Icon className="size-4" />
@@ -233,28 +228,23 @@ export function Home() {
                             )
                         })}
                     </div>
-                    {hasSelectedFeatures && (
-                        <button
-                            onClick={resetFeatures}
-                            className="mt-2 text-sm text-purple-600 underline hover:text-purple-700"
-                        >
-                            편의시설 필터 초기화
-                        </button>
-                    )}
                 </div>
 
                 {/* 지역 필터 */}
                 <div>
-                    <label className="mb-2 block text-sm text-gray-700">지역</label>
+                    <label className="mb-2 block text-sm text-gray-700 dark:text-gray-300">지역</label>
                     <div className="flex flex-wrap gap-2">
                         {locations.map((location) => (
                             <button
                                 key={location}
-                                onClick={() => { setSelectedLocation(location); setPage(1) }}
+                                onClick={() => {
+                                    setSelectedLocation(location)
+                                    setPage(1)
+                                }}
                                 className={`rounded-full px-4 py-2 text-sm transition-colors ${
                                     selectedLocation === location
                                         ? 'bg-indigo-500 text-white'
-                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
                                 }`}
                             >
                                 {location}
@@ -267,7 +257,10 @@ export function Home() {
             {/* 정렬 버튼 */}
             <div className="flex justify-end gap-2">
                 <button
-                    onClick={() => { setSortType('latest'); setPage(1) }}
+                    onClick={() => {
+                        setSortType('latest')
+                        setPage(1)
+                    }}
                     className={`rounded-full px-4 py-2 text-sm ${
                         sortType === 'latest' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
@@ -275,7 +268,10 @@ export function Home() {
                     최신순
                 </button>
                 <button
-                    onClick={() => { setSortType('rating'); setPage(1) }}
+                    onClick={() => {
+                        setSortType('rating')
+                        setPage(1)
+                    }}
                     className={`rounded-full px-4 py-2 text-sm ${
                         sortType === 'rating' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
@@ -283,7 +279,10 @@ export function Home() {
                     평점순
                 </button>
                 <button
-                    onClick={() => { setSortType('review'); setPage(1) }}
+                    onClick={() => {
+                        setSortType('review')
+                        setPage(1)
+                    }}
                     className={`rounded-full px-4 py-2 text-sm ${
                         sortType === 'review' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
