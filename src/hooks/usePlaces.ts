@@ -50,12 +50,9 @@ export function usePlaces(filters: Filters, page: number = 1) {
         const from = (page - 1) * ITEMS_PER_PAGE
         const to = from + ITEMS_PER_PAGE - 1
 
-        // 평점순 또는 리뷰많은순이면 view 사용
-        const useView = filters.sortType === 'rating' || filters.sortType === 'review'
-        const tableName = useView ? 'places_with_score' : 'places'
-
+        const tableName = 'places_with_score'
         const baseColumns = 'content_id, title, address, area_code, content_type, image_url, wheelchair, elevator, restroom, parking, braileblock, audioguide, signguide'
-        const selectString = useView ? `${baseColumns}, avg_score, review_count` : baseColumns
+        const selectString = `${baseColumns}, avg_score, review_count`  
 
         let query = supabase.from(tableName as any).select(selectString, { count: 'exact' })
 
