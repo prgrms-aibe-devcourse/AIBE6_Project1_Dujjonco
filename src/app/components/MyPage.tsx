@@ -1,11 +1,11 @@
 import { fetchBookmarksByUser } from '@/supabase/query/bookmark'
-import { fetchPostCountByUser } from '@/supabase/query/post'
-import { fetchReviewCountByUser } from '@/supabase/query/review'
+import { fetchPostCountByUser, fetchUserPosts } from '@/supabase/query/post'
 import { useQuery } from '@tanstack/react-query'
 import { Accessibility, Calendar, Edit2, LogOut, Mail, Save, User, X } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
+import { reviewsService } from '../services/reviews'
 
 export function MyPage() {
     const { user, logout, updateProfile } = useAuth()
@@ -16,6 +16,7 @@ export function MyPage() {
     const [message, setMessage] = useState('')
     const [error, setError] = useState('')
     const [nickname, setNickname] = useState(user?.nickname || '')
+    const [activeTab, setActiveTab] = useState<'posts' | 'reviews'>('posts')
 
     const accessibilityTypes = ['일반', '지체장애', '시각장애', '청각장애', '발달장애', '기타']
 
@@ -31,7 +32,18 @@ export function MyPage() {
     })
     const { data: reviewCount = 0 } = useQuery({
         queryKey: ['reviewCount', user?.id ?? ''],
-        queryFn: () => fetchReviewCountByUser(user!.id),
+        queryFn: () => reviewsService.getReviewCountByUser(user!.id),
+        enabled: !!user,
+    })
+
+    const { data: userPosts = [] } = useQuery({
+        queryKey: ['userPosts', user?.id ?? ''],
+        queryFn: () => fetchUserPosts(user!.id),
+        enabled: !!user,
+    })
+    const { data: userReviews = [] } = useQuery({
+        queryKey: ['userReviews', user?.id ?? ''],
+        queryFn: () => reviewsService.getUserReviews(user!.id),
         enabled: !!user,
     })
 
@@ -222,22 +234,26 @@ export function MyPage() {
                 </div>
 
                 {/* Stats Card */}
+
                 <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-                    <div className="rounded-xl bg-white p-6 text-center shadow">
-                        <div className="mb-2 text-3xl">{reviewCount}</div>
-                        <div className="text-sm text-gray-600">작성한 리뷰</div>
-                    </div>
+                    <Link to="/reviews" className="block">
+                        <div className="rounded-xl bg-white p-6 text-center shadow transition-colors hover:bg-gray-200">
+                            <div className="mb-2 text-3xl">{reviewCount}</div>
+                            <div className="text-sm text-gray-600">작성한 리뷰</div>
+                        </div>
+                    </Link>
                     <Link to="/bookmark" className="block">
                         <div className="rounded-xl bg-white p-6 text-center shadow transition-colors hover:bg-gray-200">
                             <div className="mb-2 text-3xl">{bookmarkCount}</div>
                             <div className="text-sm text-gray-600">저장한 장소</div>
                         </div>
                     </Link>
-
-                    <div className="rounded-xl bg-white p-6 text-center shadow">
-                        <div className="mb-2 text-3xl">{postCount}</div>
-                        <div className="text-sm text-gray-600">작성한 게시물</div>
-                    </div>
+                    <Link to={`/community?userId=${user.id}`} className="block">
+                        <div className="rounded-xl bg-white p-6 text-center shadow transition-colors hover:bg-gray-200">
+                            <div className="mb-2 text-3xl">{postCount}</div>
+                            <div className="text-sm text-gray-600">작성한 게시물</div>
+                        </div>
+                    </Link>
                 </div>
 
                 {/* Logout Button */}

@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router'
+import { Bookmark } from './components/bookmark'
 import { Community } from './components/Community'
 import { FacilityDetail } from './components/FacilityDetail'
 import { Home } from './components/Home'
@@ -7,8 +8,8 @@ import { MyPage } from './components/MyPage'
 import { NotFound } from './components/NotFound'
 import PostDetailPage from './components/PostDetailPage'
 import { RegisterWrapper as Register } from './components/RegisterWrapper'
+import { ReviewPage } from './components/ReviewPage'
 import { Root } from './components/Root'
-import { Bookmark } from './components/bookmark'
 
 export const router = createBrowserRouter([
     {
@@ -21,6 +22,7 @@ export const router = createBrowserRouter([
             { path: 'community', Component: Community },
             { path: 'post/:id', Component: PostDetailPage },
             { path: 'bookmark', Component: Bookmark },
+            { path: 'reviews', Component: ReviewPage },
             { path: '*', Component: NotFound },
         ],
     },

@@ -95,3 +95,15 @@ export async function fetchPostCountByUser(userId: string) {
     if (error) throw error
     return count ?? 0
 }
+
+//마이페이지 사용자가 작성한 게시물 목록 조회
+export async function fetchUserPosts(userId: string) {
+    const { data, error } = await supabase
+        .from('post')
+        .select('id, title, content, created_at')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+
+    if (error) throw error
+    return data
+}
