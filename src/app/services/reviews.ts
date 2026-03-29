@@ -229,6 +229,29 @@ class ReviewsService {
         if (error) return { success: false, error: error.message }
         return { success: true }
     }
+
+    // 마이페이지 리뷰 개수 조회
+    async getReviewCountByUser(userId: string) {
+        const { count, error } = await supabase
+            .from('reviews')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', userId)
+
+        if (error) return 0
+        return count ?? 0
+    }
+
+    // 마이페이지 사용자가 작성한 리뷰 목록 조회
+    async getUserReviews(userId: string) {
+        const { data, error } = await supabase
+            .from('reviews')
+            .select('id, content, created_at, place_id, places(title,image_url)')
+            .eq('user_id', userId)
+            .order('created_at', { ascending: false })
+
+        if (error) return []
+        return data
+    }
 }
 
 export const reviewsService = new ReviewsService()
