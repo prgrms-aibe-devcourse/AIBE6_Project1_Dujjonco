@@ -37,6 +37,10 @@
 - 스크립트 격리: DB 적재용 스크립트(scripts/)를 런타임 코드(src/)와 분리하여 배포 최적화를 고려했습니다.
 
 ## 2. 폴더 트리
+
+### App/component/facility : 각 가게의 상세피이지
+### App/component/facility/review : 각 가게의 상세페이지에 달린 리뷰
+### App/component/post : 사용자들이 사용하는 자유게시판 
 ```
 src
 ├── App.css
