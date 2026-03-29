@@ -43,7 +43,7 @@ export function FacilityDetail() {
 
     return (
         <div className="space-y-6 pb-20">
-            <Link to="/" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900">
+            <Link to="/" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 dark:text-white">
                 <ArrowLeft className="size-5" />
                 <span>목록으로</span>
             </Link>
