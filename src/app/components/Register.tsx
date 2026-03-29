@@ -52,7 +52,7 @@ export function Register() {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 px-4 py-12">
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 px-4 py-12 dark:bg-gray-900 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900">
             <div className="w-full max-w-md">
                 {/* Logo */}
                 <div className="mb-8 text-center">
@@ -61,13 +61,13 @@ export function Register() {
                             <Accessibility className="size-12 text-white" />
                         </div>
                     </Link>
-                    <h1 className="mb-2 text-3xl">배리어플레이스</h1>
-                    <p className="text-gray-600">모두를 위한 접근 가능한 공간</p>
+                    <h1 className="mb-2 text-3xl dark:text-white">배리어플레이스</h1>
+                    <p className="text-gray-600 dark:text-gray-400">모두를 위한 접근 가능한 공간</p>
                 </div>
 
                 {/* Register Form */}
-                <div className="rounded-2xl bg-white p-8 shadow-xl">
-                    <h2 className="mb-6 text-center text-2xl">회원가입</h2>
+                <div className="rounded-2xl bg-white p-8 shadow-xl dark:bg-gray-800">
+                    <h2 className="mb-6 text-center text-2xl dark:text-white">회원가입</h2>
 
                     {error && (
                         <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
@@ -77,14 +77,14 @@ export function Register() {
 
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div>
-                            <label className="mb-2 block text-sm text-gray-700">이름</label>
+                            <label className="mb-2 block text-sm text-gray-700 dark:text-gray-400">이름</label>
                             <div className="relative">
                                 <User className="absolute top-1/2 left-3 size-5 -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                    className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                                     placeholder="홍길동"
                                     required
                                 />
@@ -92,14 +92,14 @@ export function Register() {
                         </div>
 
                         <div>
-                            <label className="mb-2 block text-sm text-gray-700">닉네임</label>
+                            <label className="mb-2 block text-sm text-gray-700 dark:text-gray-400">닉네임</label>
                             <div className="relative">
                                 <User className="absolute top-1/2 left-3 size-5 -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="text"
                                     value={nickname}
                                     onChange={(e) => setNickname(e.target.value)}
-                                    className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                    className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                                     placeholder="한글 2~8자 또는 영문/숫자 2~14자"
                                     required
                                 />
@@ -107,14 +107,14 @@ export function Register() {
                         </div>
 
                         <div>
-                            <label className="mb-2 block text-sm text-gray-700">이메일</label>
+                            <label className="mb-2 block text-sm text-gray-700 dark:text-gray-400">이메일</label>
                             <div className="relative">
                                 <Mail className="absolute top-1/2 left-3 size-5 -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                    className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                                     placeholder="your@email.com"
                                     required
                                 />
@@ -122,14 +122,14 @@ export function Register() {
                         </div>
 
                         <div>
-                            <label className="mb-2 block text-sm text-gray-700">비밀번호</label>
+                            <label className="mb-2 block text-sm text-gray-700 dark:text-gray-400">비밀번호</label>
                             <div className="relative">
                                 <Lock className="absolute top-1/2 left-3 size-5 -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                    className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                                     placeholder="최소 6자 이상"
                                     required
                                 />
@@ -137,14 +137,14 @@ export function Register() {
                         </div>
 
                         <div>
-                            <label className="mb-2 block text-sm text-gray-700">비밀번호 확인</label>
+                            <label className="mb-2 block text-sm text-gray-700 dark:text-gray-400">비밀번호 확인</label>
                             <div className="relative">
                                 <Lock className="absolute top-1/2 left-3 size-5 -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="password"
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                    className="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                                     placeholder="비밀번호 재입력"
                                     required
                                 />
@@ -152,13 +152,13 @@ export function Register() {
                         </div>
 
                         <div>
-                            <label className="mb-2 block text-sm text-gray-700">접근성 유형</label>
+                            <label className="mb-2 block text-sm text-gray-700 dark:text-gray-400">접근성 유형</label>
                             <div className="relative">
                                 <Accessibility className="absolute top-1/2 left-3 size-5 -translate-y-1/2 text-gray-400" />
                                 <select
                                     value={accessibilityType}
                                     onChange={(e) => setAccessibilityType(e.target.value)}
-                                    className="w-full appearance-none rounded-lg border border-gray-300 bg-white py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                    className="w-full appearance-none rounded-lg border border-gray-300 bg-white py-3 pr-4 pl-11 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                                     required
                                 >
                                     {accessibilityTypes.map((type) => (
@@ -168,7 +168,7 @@ export function Register() {
                                     ))}
                                 </select>
                             </div>
-                            <p className="mt-1 text-xs text-gray-500">맞춤형 추천을 위해 선택해주세요 (선택사항)</p>
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">맞춤형 추천을 위해 선택해주세요 (선택사항)</p>
                         </div>
 
                         <button
@@ -181,7 +181,7 @@ export function Register() {
                     </form>
 
                     <div className="mt-6 text-center">
-                        <p className="text-gray-600">
+                        <p className="text-gray-600 dark:text-gray-400">
                             이미 계정이 있으신가요?{' '}
                             <Link to="/login" className="font-semibold text-blue-600 hover:text-blue-700">
                                 로그인
