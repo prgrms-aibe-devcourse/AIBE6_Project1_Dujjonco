@@ -323,35 +323,37 @@ export function Home() {
 
             {/* 페이지네이션 */}
             {!loading && totalPages > 1 && (
-                <div className="mt-8 flex items-center justify-center gap-2">
-                    <button
-                        onClick={() => setPage((p) => p - 1)}
-                        disabled={page === 1}
-                        className="rounded-lg bg-gray-100 px-4 py-2 disabled:opacity-50"
-                    >
-                        이전
-                    </button>
-                    {Array.from({ length: totalPages }, (_, i) => i + 1)
-                        .filter((p) => p >= Math.max(1, page - 4) && p <= Math.min(totalPages, page + 5))
-                        .map((p) => (
-                            <button
-                                key={p}
-                                onClick={() => setPage(p)}
-                                className={`rounded-lg px-4 py-2 ${
-                                    page === p ? 'bg-blue-500 text-white' : 'bg-gray-100'
-                                }`}
-                            >
-                                {p}
-                            </button>
-                        ))}
-                    <button
-                        onClick={() => setPage((p) => p + 1)}
-                        disabled={page === totalPages}
-                        className="rounded-lg bg-gray-100 px-4 py-2 disabled:opacity-50"
-                    >
-                        다음
-                    </button>
-                </div>
+            <div className="mt-8 flex items-center justify-center gap-2">
+                <button
+                    onClick={() => setPage((p) => p - 1)}
+                    disabled={page === 1}
+                    className="rounded-lg bg-gray-100 px-4 py-2 disabled:opacity-50 hover:bg-white dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-500"
+                >
+                    이전
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter((p) => p >= Math.max(1, page - 4) && p <= Math.min(totalPages, page + 5))
+                    .map((p) => (
+                        <button
+                            key={p}
+                            onClick={() => setPage(p)}
+                            className={`rounded-lg px-4 py-2 ${
+                                page === p
+                                    ? 'bg-blue-500 text-white'
+                                    : 'bg-gray-100 text-gray-700 hover:bg-white dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-500'
+                            }`}
+                        >
+                            {p}
+                        </button>
+                    ))}
+                <button
+                    onClick={() => setPage((p) => p + 1)}
+                    disabled={page === totalPages}
+                    className="rounded-lg bg-gray-100 px-4 py-2 disabled:opacity-50 hover:bg-white dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-500"
+                >
+                    다음
+                </button>
+            </div>
             )}
         </div>
     )
