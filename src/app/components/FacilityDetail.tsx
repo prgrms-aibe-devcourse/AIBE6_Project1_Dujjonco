@@ -62,7 +62,7 @@ export function FacilityDetail() {
                         type="button"
                         onClick={toggleBookmark}
                         disabled={bookmarkLoading}
-                        className="absolute top-4 right-4 z-10 flex size-12 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-70"
+                        className="absolute top-4 right-4 z-10 flex size-12 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-gray-800"
                         aria-label={isBookmarked ? '북마크 해제' : '북마크 추가'}
                         title={isBookmarked ? '북마크 해제' : '북마크 추가'}
                     >
@@ -79,7 +79,7 @@ export function FacilityDetail() {
                     </div>
                 </div>
 
-                <div className="space-y-6 p-8">
+                <div className="space-y-6 p-8 dark:bg-gray-800">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div className="flex items-center gap-3">
                             <MapPin className="size-5 text-blue-600" />
@@ -95,7 +95,7 @@ export function FacilityDetail() {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 dark:text-black">
                         {activeAssistTypes.map(([key, label]: [string, string]) => {
                             const isOpen = openAssistKey === key
                             const detail = facility[key as keyof typeof facility]
@@ -105,17 +105,41 @@ export function FacilityDetail() {
                                     <button
                                         type="button"
                                         onClick={() => setOpenAssistKey((prev) => (prev === key ? null : key))}
-                                        className={`w-full rounded-lg p-3 text-left transition ${
-                                            isOpen ? 'bg-blue-100 ring-2 ring-blue-300' : 'bg-blue-50 hover:bg-blue-100'
+                                        className={`group w-full cursor-pointer rounded-lg border p-3 text-left transition-all duration-200 active:scale-[0.98] ${
+                                            isOpen
+                                                ? 'border-blue-300 bg-blue-500 text-white shadow-md dark:text-black'
+                                                : 'border-blue-200 bg-blue-50 text-gray-800 hover:-translate-y-0.5 hover:bg-blue-100 hover:shadow-sm dark:text-black'
                                         }`}
                                     >
-                                        {label}
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span className="font-medium">{label}</span>
+
+                                            <span
+                                                className={`text-xs transition-transform duration-200 ${
+                                                    isOpen
+                                                        ? 'rotate-180 text-white dark:text-black'
+                                                        : 'text-blue-500 dark:text-black'
+                                                }`}
+                                            >
+                                                ▼
+                                            </span>
+                                        </div>
+
+                                        <div
+                                            className={`mt-1 text-xs ${
+                                                isOpen
+                                                    ? 'text-blue-100 dark:text-black'
+                                                    : 'text-gray-500 dark:text-black'
+                                            }`}
+                                        >
+                                            {isOpen ? '접기' : '클릭해서 상세보기'}
+                                        </div>
                                     </button>
 
                                     {isOpen && (
                                         <div className="absolute top-full left-6 z-20 mt-3 w-80">
-                                            <div className="relative rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm leading-6 break-words text-gray-700 shadow-lg">
-                                                <div className="absolute -top-2 left-4 h-4 w-4 rotate-45 border-t border-l border-blue-100 bg-white" />
+                                            <div className="relative rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm leading-6 break-words text-gray-700 shadow-lg dark:bg-gray-800 dark:text-white">
+                                                <div className="absolute -top-2 left-4 h-4 w-4 rotate-45 border-t border-l border-blue-100 bg-white dark:bg-gray-800" />
                                                 {detail
                                                     ? String(detail)
                                                           .split('<br/>')
