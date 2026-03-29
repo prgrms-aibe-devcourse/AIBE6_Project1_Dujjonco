@@ -1,10 +1,10 @@
 import { usePostData } from '@/hooks/queries/use-post-data'
 import { Navigate, useParams } from 'react-router'
+import Fallback from '../fallback'
+import Loader from '../loader'
 import CommentEditor from './comment/comment-editor'
 import CommentList from './comment/comment-list'
-import Fallback from './fallback'
-import Loader from './loader'
-import PostItem from './post/post-item'
+import PostItem from './post-item'
 
 export default function PostDetailPage() {
     const { id } = useParams()

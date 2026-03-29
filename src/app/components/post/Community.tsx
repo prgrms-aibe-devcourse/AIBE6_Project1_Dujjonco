@@ -1,5 +1,5 @@
-import CreatePostButton from './post/create-post-button'
-import PostFeed from './post/post-feed'
+import CreatePostButton from './create-post-button'
+import PostFeed from './post-feed'
 
 export function Community() {
     return (

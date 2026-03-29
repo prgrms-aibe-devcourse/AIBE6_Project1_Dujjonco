@@ -32,8 +32,7 @@ export default function LikePostButton({
             onClick={handleLikeClick}
             className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border-1 p-2 px-4 text-sm"
         >
-            <HeartIcon className={`h-4 w-4 ${isLiked ? 'fill-black' : ''}`} />
-            <span>{likeCount}</span>
+            <HeartIcon className={`h-4 w-4 ${isLiked ? 'fill-black dark:fill-white' : ''}`} /> <span>{likeCount}</span>
         </div>
     )
 }
