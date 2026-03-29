@@ -58,9 +58,16 @@ export default function PostItem(post: Post & { isDetail?: boolean }) {
                     <CarouselContent>
                         {post.post_images.map((image, index) =>
                             image.image_url?.map((url, urlIndex) => (
-                                <CarouselItem className="basis-3/5" key={`${index}-${urlIndex}`}>
+                                <CarouselItem
+                                    className={`${post.isDetail ? 'basis-auto' : 'basis-3/5'}`}
+                                    key={`${index}-${urlIndex}`}
+                                >
+                                    {' '}
                                     <div className="overflow-hidden rounded-xl">
-                                        <img src={url} className="h-full max-h-[350px] w-full object-cover" />
+                                        <img
+                                            src={url}
+                                            className={`h-full max-h-[350px] w-full ${post.isDetail ? 'object-contain' : 'object-cover'}`}
+                                        />{' '}
                                     </div>
                                 </CarouselItem>
                             )),
