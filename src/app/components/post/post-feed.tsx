@@ -1,6 +1,6 @@
 import { usePostsData } from '@/hooks/queries/use-posts-data'
-import Fallback from '../fallback'
-import Loader from '../loader'
+import Fallback from '../common/ErrorFallback'
+import Loader from '../common/LoadingSpinner'
 import PostItem from './post-item'
 
 export default function PostFeed() {

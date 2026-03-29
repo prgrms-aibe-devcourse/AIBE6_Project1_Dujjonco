@@ -1,11 +1,11 @@
-import { fetchBookmarksByUser } from '@/supabase/query/bookmark'
-import { fetchPostCountByUser } from '@/supabase/query/post'
+import { fetchBookmarksByUser } from '@/supabase/query/place/bookmark'
+import { fetchPostCountByUser } from '@/supabase/query/post/post'
 import { useQuery } from '@tanstack/react-query'
 import { Accessibility, Calendar, Edit2, LogOut, Mail, Save, User, X } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
-import { useAuth } from '../contexts/AuthContext'
-import { reviewsService } from '../services/reviews'
+import { useAuth } from '../../contexts/AuthContext'
+import { reviewsService } from '../../services/reviews'
 
 export function MyPage() {
     const { user, logout, updateProfile } = useAuth()

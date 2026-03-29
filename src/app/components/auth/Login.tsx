@@ -2,7 +2,7 @@ import { Accessibility, Lock, Mail } from 'lucide-react'
 import type { SubmitEvent } from 'react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../../contexts/AuthContext'
 
 export function Login() {
     const [email, setEmail] = useState('')

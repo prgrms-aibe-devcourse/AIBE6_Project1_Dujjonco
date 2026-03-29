@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router'
-import { useAuth } from '../contexts/AuthContext'
-import { reviewsService } from '../services/reviews'
+import { useAuth } from '../../contexts/AuthContext'
+import { reviewsService } from '../../services/reviews'
 
 export function ReviewPage() {
     const { user } = useAuth()

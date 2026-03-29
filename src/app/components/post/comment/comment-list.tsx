@@ -1,6 +1,6 @@
 import { useCommentsData } from '@/hooks/queries/use-comments-data'
-import Fallback from '../../fallback'
-import Loader from '../../loader'
+import Fallback from '../../common/ErrorFallback'
+import Loader from '../../common/LoadingSpinner'
 import CommentItem from './comment-item'
 
 export default function CommentList({ postId }: { postId: string }) {

@@ -1,4 +1,4 @@
-import { supabase } from '../supabase'
+import { supabase } from '../../supabase'
 import { uploadPostImages } from './post-images'
 
 export async function fetchPost(id: string) {

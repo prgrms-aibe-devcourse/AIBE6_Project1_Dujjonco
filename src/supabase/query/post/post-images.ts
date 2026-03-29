@@ -1,4 +1,4 @@
-import { supabase } from '../supabase'
+import { supabase } from '../../supabase'
 
 function fileToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {

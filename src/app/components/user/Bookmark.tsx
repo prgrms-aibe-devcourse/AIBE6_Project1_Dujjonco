@@ -1,8 +1,8 @@
-import { fetchBookmarks } from '@/supabase/query/bookmark'
+import { fetchBookmarks } from '@/supabase/query/place/bookmark'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router'
-import { useAuth } from '../contexts/AuthContext'
-import { ImageWithFallback } from './figma/ImageWithFallback'
+import { useAuth } from '../../contexts/AuthContext'
+import { ImageWithFallback } from '../common/ImageWithFallback'
 
 export function Bookmark() {
     const { user } = useAuth()

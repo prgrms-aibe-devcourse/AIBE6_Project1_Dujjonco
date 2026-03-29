@@ -1,7 +1,7 @@
 import CreatePostButton from './create-post-button'
 import PostFeed from './post-feed'
 
-export function Community() {
+export function PostListPage() {
     return (
         <div className="flex flex-col gap-10">
             <CreatePostButton />

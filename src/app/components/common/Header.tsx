@@ -1,6 +1,6 @@
 import { Accessibility, LogIn, LogOut, MessageSquare, User } from 'lucide-react'
 import { Link } from 'react-router'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../../contexts/AuthContext'
 import ThemeButton from './header/theme-button'
 
 export function Header() {

@@ -1,5 +1,5 @@
 import { useAuth } from '@/app/contexts/AuthContext'
-import { formatTimeAgo } from '@/app/util/time'
+import { formatTimeAgo } from '@/lib/time'
 import defaultAvatar from '@/assets/default-avatar.png'
 import { useDeleteComment } from '@/hooks/mutations/post/comment/use-delete-comment'
 import { useUpdateComment } from '@/hooks/mutations/post/comment/use-update-comment'

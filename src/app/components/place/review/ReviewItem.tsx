@@ -1,8 +1,8 @@
-import UserNickname from '@/app/components/UserNickname'
+import UserNickname from '@/app/components/user/UserNickname'
 import { type Review } from '@/app/services/reviews'
 import { Star, Heart, Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { ImageWithFallback } from '../figma/ImageWithFallback'
+import { ImageWithFallback } from '../../common/ImageWithFallback'
 
 interface ReviewItemProps {
     review: Review

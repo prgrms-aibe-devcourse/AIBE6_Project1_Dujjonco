@@ -1,4 +1,4 @@
-import { fetchPost } from '@/supabase/query/post'
+import { fetchPost } from '@/supabase/query/post/post'
 import { useQuery } from '@tanstack/react-query'
 import { queryKeys } from './query-keys'
 
