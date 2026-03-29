@@ -1,4 +1,4 @@
-import { supabase } from '../supabase'
+import { supabase } from '../../supabase'
 import { uploadPostImages } from './post-images'
 
 export async function fetchPost(id: string) {
@@ -100,7 +100,14 @@ export async function fetchPostCountByUser(userId: string) {
 export async function fetchUserPosts(userId: string) {
     const { data, error } = await supabase
         .from('post')
-        .select('id, title, content, created_at')
+        .select(
+            `
+            *,
+            post_images (image_url),
+            post_likes (id, user_id),
+            post_comments (id)
+        `,
+        )
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
 

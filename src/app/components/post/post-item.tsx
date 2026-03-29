@@ -1,6 +1,6 @@
 import { useAuth } from '@/app/contexts/AuthContext'
 import { Carousel, CarouselContent, CarouselItem } from '@/app/ui2/carousel2'
-import { formatTimeAgo } from '@/app/util/time'
+import { formatTimeAgo } from '@/lib/time'
 import defaultAvatar from '@/assets/default-avatar.png'
 import { useUserNickname } from '@/hooks/queries/use-user-nickname'
 import type { Post } from '@/types'

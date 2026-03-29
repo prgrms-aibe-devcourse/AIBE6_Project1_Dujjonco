@@ -2,7 +2,7 @@ import { Accessibility, Lock, Mail } from 'lucide-react'
 import type { SubmitEvent } from 'react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../../contexts/AuthContext'
 
 export function Login() {
     const [email, setEmail] = useState('')
@@ -100,13 +100,6 @@ export function Login() {
                             </Link>
                         </p>
                     </div>
-                </div>
-
-                {/* Demo Account Info */}
-                <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-gray-600 dark:bg-gray-800">
-                    <p className="text-center text-sm text-blue-800 dark:text-gray-300">
-                        💡 테스트 계정: test@example.com / password123
-                    </p>
                 </div>
             </div>
         </div>

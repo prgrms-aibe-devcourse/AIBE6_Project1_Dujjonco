@@ -2,7 +2,7 @@ import ModalProvider from '@/provider/modal-provider'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { Outlet } from 'react-router'
-import { AuthProvider } from '../contexts/AuthContext'
+import { AuthProvider } from '../../contexts/AuthContext'
 import { Header } from './Header'
 
 const queryClient = new QueryClient()

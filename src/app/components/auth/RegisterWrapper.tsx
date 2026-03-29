@@ -1,4 +1,4 @@
-import { AuthProvider } from '../contexts/AuthContext'
+import { AuthProvider } from '../../contexts/AuthContext'
 import { Register } from './Register'
 
 export function RegisterWrapper() {

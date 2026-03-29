@@ -1,4 +1,4 @@
-import { updateComment } from '@/supabase/query/post-comments'
+import { updateComment } from '@/supabase/query/post/post-comments'
 import type { UseMutationCallback } from '@/types'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 

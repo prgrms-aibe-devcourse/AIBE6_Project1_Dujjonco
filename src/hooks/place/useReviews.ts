@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { reviewsService, type Review } from '../app/services/reviews'
+import { reviewsService, type Review } from '../../app/services/reviews'
 
 // 특정 장소의 리뷰 목록 관리 및 작성 기능을 제공하는 커스텀 훅
 export function useReviews(placeId: string, userId?: string, sortBy: 'latest' | 'likes' = 'latest') {

@@ -1,4 +1,4 @@
-import { supabase } from '../supabase'
+import { supabase } from '../../supabase'
 // 북마크 개수 조회
 export async function fetchBookmarksByUser(userId: string) {
     const { count, error } = await supabase

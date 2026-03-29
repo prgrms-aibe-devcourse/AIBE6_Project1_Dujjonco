@@ -1,4 +1,4 @@
-import { fetchComments } from '@/supabase/query/post-comments'
+import { fetchComments } from '@/supabase/query/post/post-comments'
 import { useQuery } from '@tanstack/react-query'
 
 export function useCommentsData(postId: string) {

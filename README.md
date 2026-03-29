@@ -1,6 +1,6 @@
   # 배포관련
-  - [개발 테스트 링크](https://freeway-chi.vercel.app/)<br>
-  - [배포용 레포](https://github.com/hoehoeabi/freeway/tree/develop)
+  - [개발 테스트 링크](https://freeway-rho.vercel.app/)<br>
+  - [배포용 레포](https://github.com/hoehoeabi/freeway)
 
   ---
   

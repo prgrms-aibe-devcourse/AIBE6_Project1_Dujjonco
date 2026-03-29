@@ -1,11 +1,11 @@
 import { Accessibility, ArrowDownUp, CircleParking, DoorOpen, Heart, MapPin, Star } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { AreaCode, ContentType, getActiveIcons } from '../../constants/api-codes'
-import { useBookmarks } from '../../hooks/useBookmark'
-import { usePlaces } from '../../hooks/usePlaces'
-import { useAuth } from '../contexts/AuthContext'
-import { ImageWithFallback } from './figma/ImageWithFallback'
+import { AreaCode, ContentType, getActiveIcons } from '../../../constants/api-codes'
+import { useBookmarks } from '../../../hooks/place/useBookmark'
+import { usePlaces } from '../../../hooks/place/usePlaces'
+import { useAuth } from '../../contexts/AuthContext'
+import { ImageWithFallback } from '../common/ImageWithFallback'
 
 const CATEGORY_MAP: Record<string, string> = {
     전체: '전체',
