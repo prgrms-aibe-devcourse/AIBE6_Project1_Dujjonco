@@ -47,11 +47,12 @@ export default function PostEditorModal() {
     }
 
     const handleSavePostClick = () => {
-        if (content.trim() === '') return
         if (!user?.id) {
             toast.error('로그인이 필요합니다.', { position: 'top-center' })
             return
         }
+        if (content.trim() === '') return
+
         if (!postEditorModal.isOpen) return
 
         if (postEditorModal.type === 'CREATE') {
