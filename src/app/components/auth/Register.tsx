@@ -61,7 +61,7 @@ export function Register() {
                             <Accessibility className="size-12 text-white" />
                         </div>
                     </Link>
-                    <h1 className="mb-2 text-3xl dark:text-white">배리어플레이스</h1>
+                    <h1 className="mb-2 text-3xl dark:text-white">FreeWay</h1>
                     <p className="text-gray-600 dark:text-gray-400">모두를 위한 접근 가능한 공간</p>
                 </div>
 
