@@ -1,6 +1,5 @@
 import { Accessibility, ArrowDownUp, CircleParking, DoorOpen, Heart, MapPin, Star } from 'lucide-react'
-import { useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { AreaCode, ContentType, getActiveIcons } from '../../../constants/api-codes'
 import { useBookmarks } from '../../../hooks/place/useBookmark'
 import { usePlaces } from '../../../hooks/place/usePlaces'
@@ -122,19 +121,70 @@ function PlaceCard({
 export function Home() {
     const { user } = useAuth()
     const { bookmarks, loadingId, toggleBookmark } = useBookmarks(user?.id)
-    const [searchKeyword, setSearchKeyword] = useState('')
+    const [searchParams, setSearchParams] = useSearchParams()
 
-    const [selectedCategory, setSelectedCategory] = useState<string>('전체')
-    const [selectedLocation, setSelectedLocation] = useState<string>('전체')
-    const [selectedFeatures, setSelectedFeatures] = useState({
-        wheelchair: false,
-        elevator: false,
-        restroom: false,
-        parking: false,
-    })
-    const [sortType, setSortType] = useState<SortType>('latest')
-    const [page, setPage] = useState(1)
+    // ── URL에서 상태 읽기 (없으면 기본값) ──────────────────────────
+    const selectedCategory = searchParams.get('category') ?? '전체'
+    const selectedLocation = searchParams.get('location') ?? '전체'
+    const sortType = (searchParams.get('sort') ?? 'latest') as SortType
+    const page = Number(searchParams.get('page') ?? '1')
+    const searchKeyword = searchParams.get('keyword') ?? ''
+    const selectedFeatures = {
+        wheelchair: searchParams.get('wheelchair') === 'true',
+        elevator: searchParams.get('elevator') === 'true',
+        restroom: searchParams.get('restroom') === 'true',
+        parking: searchParams.get('parking') === 'true',
+    }
 
+    // ── URL 업데이트 헬퍼 ──────────────────────────────────────────
+    // 기본값은 URL에서 제거해 주소를 깔끔하게 유지
+    const DEFAULT_VALUES: Record<string, string> = {
+        category: '전체',
+        location: '전체',
+        sort: 'latest',
+        page: '1',
+        keyword: '',
+        wheelchair: 'false',
+        elevator: 'false',
+        restroom: 'false',
+        parking: 'false',
+    }
+
+    const updateParams = (updates: Record<string, string>) => {
+        setSearchParams(
+            (prev) => {
+                const next = new URLSearchParams(prev)
+                Object.entries(updates).forEach(([k, v]) => {
+                    if (v === DEFAULT_VALUES[k]) {
+                        next.delete(k)
+                    } else {
+                        next.set(k, v)
+                    }
+                })
+                return next
+            },
+            { replace: true }, // 히스토리 스택 오염 방지
+        )
+    }
+
+    // ── 이벤트 핸들러 ─────────────────────────────────────────────
+    const toggleFeature = (key: keyof typeof selectedFeatures) => {
+        updateParams({ [key]: String(!selectedFeatures[key]), page: '1' })
+    }
+
+    const resetFeatures = () => {
+        updateParams({
+            wheelchair: 'false',
+            elevator: 'false',
+            restroom: 'false',
+            parking: 'false',
+            page: '1',
+        })
+    }
+
+    const hasSelectedFeatures = Object.values(selectedFeatures).some(Boolean)
+
+    // ── 상수 ──────────────────────────────────────────────────────
     const categories = Object.keys(CATEGORY_MAP)
     const locations = Object.keys(LOCATION_MAP)
 
@@ -158,17 +208,6 @@ export function Home() {
         },
         page,
     )
-    const toggleFeature = (key: keyof typeof selectedFeatures) => {
-        setSelectedFeatures((prev) => ({ ...prev, [key]: !prev[key] }))
-        setPage(1)
-    }
-
-    const resetFeatures = () => {
-        setSelectedFeatures({ wheelchair: false, elevator: false, restroom: false, parking: false })
-        setPage(1)
-    }
-
-    const hasSelectedFeatures = Object.values(selectedFeatures).some(Boolean)
 
     return (
         <div className="space-y-8">
@@ -180,18 +219,18 @@ export function Home() {
                 </div>
                 <p className="text-lg opacity-90">장애인 편의시설이 잘 갖춰진 식당과 카페를 찾아보세요</p>
             </div>
+
+            {/* 검색창 */}
             <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
                 <input
                     type="text"
                     placeholder="장소명을 검색해보세요..."
                     value={searchKeyword}
-                    onChange={(e) => {
-                        setSearchKeyword(e.target.value)
-                        setPage(1)
-                    }}
+                    onChange={(e) => updateParams({ keyword: e.target.value, page: '1' })}
                     className="w-full rounded-lg border px-4 py-2 text-black focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-white"
                 />
             </div>
+
             {/* Filters */}
             <div className="space-y-4 rounded-xl bg-white p-6 shadow-sm dark:bg-gray-800">
                 {/* 카테고리 */}
@@ -201,10 +240,7 @@ export function Home() {
                         {categories.map((category) => (
                             <button
                                 key={category}
-                                onClick={() => {
-                                    setSelectedCategory(category)
-                                    setPage(1)
-                                }}
+                                onClick={() => updateParams({ category, page: '1' })}
                                 className={`rounded-full px-4 py-2 text-sm transition-colors ${
                                     selectedCategory === category
                                         ? 'bg-blue-500 text-white'
@@ -219,7 +255,17 @@ export function Home() {
 
                 {/* 배리어프리 퀵태그 */}
                 <div>
-                    <label className="mb-2 block text-sm text-gray-700 dark:text-gray-300">편의시설 퀵태그</label>
+                    <label className="mb-2 block text-sm text-gray-700 dark:text-gray-300">
+                        편의시설 퀵태그
+                        {hasSelectedFeatures && (
+                            <button
+                                onClick={resetFeatures}
+                                className="ml-2 text-xs text-blue-500 underline hover:text-blue-700"
+                            >
+                                초기화
+                            </button>
+                        )}
+                    </label>
                     <div className="flex flex-wrap gap-2">
                         {accessibilityFeatures.map((feature) => {
                             const Icon = feature.icon
@@ -249,10 +295,7 @@ export function Home() {
                         {locations.map((location) => (
                             <button
                                 key={location}
-                                onClick={() => {
-                                    setSelectedLocation(location)
-                                    setPage(1)
-                                }}
+                                onClick={() => updateParams({ location, page: '1' })}
                                 className={`rounded-full px-4 py-2 text-sm transition-colors ${
                                     selectedLocation === location
                                         ? 'bg-indigo-500 text-white'
@@ -268,39 +311,19 @@ export function Home() {
 
             {/* 정렬 버튼 */}
             <div className="flex justify-end gap-2">
-                <button
-                    onClick={() => {
-                        setSortType('latest')
-                        setPage(1)
-                    }}
-                    className={`rounded-full px-4 py-2 text-sm ${
-                        sortType === 'latest' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                >
-                    최신순
-                </button>
-                <button
-                    onClick={() => {
-                        setSortType('rating')
-                        setPage(1)
-                    }}
-                    className={`rounded-full px-4 py-2 text-sm ${
-                        sortType === 'rating' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                >
-                    평점순
-                </button>
-                <button
-                    onClick={() => {
-                        setSortType('review')
-                        setPage(1)
-                    }}
-                    className={`rounded-full px-4 py-2 text-sm ${
-                        sortType === 'review' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                >
-                    리뷰많은순
-                </button>
+                {(['latest', 'rating', 'review'] as const).map((type) => (
+                    <button
+                        key={type}
+                        onClick={() => updateParams({ sort: type, page: '1' })}
+                        className={`rounded-full px-4 py-2 text-sm ${
+                            sortType === type
+                                ? 'bg-blue-500 text-white'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                    >
+                        {type === 'latest' ? '최신순' : type === 'rating' ? '평점순' : '리뷰많은순'}
+                    </button>
+                ))}
             </div>
 
             {/* 로딩 상태 */}
@@ -337,7 +360,7 @@ export function Home() {
             {!loading && totalPages > 1 && (
                 <div className="mt-8 flex items-center justify-center gap-2">
                     <button
-                        onClick={() => setPage((p) => p - 1)}
+                        onClick={() => updateParams({ page: String(page - 1) })}
                         disabled={page === 1}
                         className="rounded-lg bg-gray-100 px-4 py-2 hover:bg-white disabled:opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-500"
                     >
@@ -348,7 +371,7 @@ export function Home() {
                         .map((p) => (
                             <button
                                 key={p}
-                                onClick={() => setPage(p)}
+                                onClick={() => updateParams({ page: String(p) })}
                                 className={`rounded-lg px-4 py-2 ${
                                     page === p
                                         ? 'bg-blue-500 text-white'
@@ -359,7 +382,7 @@ export function Home() {
                             </button>
                         ))}
                     <button
-                        onClick={() => setPage((p) => p + 1)}
+                        onClick={() => updateParams({ page: String(page + 1) })}
                         disabled={page === totalPages}
                         className="rounded-lg bg-gray-100 px-4 py-2 hover:bg-white disabled:opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-500"
                     >
