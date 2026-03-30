@@ -124,11 +124,11 @@ export function Home() {
     const { bookmarks, loadingId, toggleBookmark } = useBookmarks(user?.id)
     const [searchParams, setSearchParams] = useSearchParams()
 
-    // ── 검색창 로컬 state (타이핑 중 URL 변경 방지) ────────────────
+    // 검색창 로컬 state (타이핑 중 URL 변경 방지) 
     const searchKeyword = searchParams.get('keyword') ?? ''
     const [inputValue, setInputValue] = useState(searchKeyword)
 
-    // ── URL에서 상태 읽기 (없으면 기본값) ──────────────────────────
+    // URL에서 상태 읽기 (없으면 기본값) 
     const selectedCategory = searchParams.get('category') ?? '전체'
     const selectedLocation = searchParams.get('location') ?? '전체'
     const sortType = (searchParams.get('sort') ?? 'latest') as SortType
@@ -140,7 +140,7 @@ export function Home() {
         parking: searchParams.get('parking') === 'true',
     }
 
-    // ── URL 업데이트 헬퍼 ──────────────────────────────────────────
+    // URL 업데이트 헬퍼 
     const DEFAULT_VALUES: Record<string, string> = {
         category: '전체',
         location: '전체',
@@ -170,12 +170,12 @@ export function Home() {
         )
     }
 
-    // ── 검색 실행 (버튼 클릭 or 엔터) ─────────────────────────────
+    // 검색 실행 (버튼 클릭 or 엔터)
     const handleSearch = () => {
         updateParams({ keyword: inputValue, page: '1' })
     }
 
-    // ── 이벤트 핸들러 ─────────────────────────────────────────────
+    // 이벤트 핸들러
     const toggleFeature = (key: keyof typeof selectedFeatures) => {
         updateParams({ [key]: String(!selectedFeatures[key]), page: '1' })
     }
@@ -192,7 +192,7 @@ export function Home() {
 
     const hasSelectedFeatures = Object.values(selectedFeatures).some(Boolean)
 
-    // ── 상수 ──────────────────────────────────────────────────────
+    // 상수
     const categories = Object.keys(CATEGORY_MAP)
     const locations = Object.keys(LOCATION_MAP)
 
@@ -241,7 +241,7 @@ export function Home() {
                     />
                     <button
                         onClick={handleSearch}
-                        className="flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-600"
+                        className="flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-600 whitespace-nowrap"
                     >
                         <Search className="size-4" />
                         검색
