@@ -1,4 +1,5 @@
-import { Accessibility, ArrowDownUp, CircleParking, DoorOpen, Heart, MapPin, Star } from 'lucide-react'
+import { Accessibility, ArrowDownUp, CircleParking, DoorOpen, Heart, MapPin, Search, Star } from 'lucide-react'
+import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { AreaCode, ContentType, getActiveIcons } from '../../../constants/api-codes'
 import { useBookmarks } from '../../../hooks/place/useBookmark'
@@ -123,12 +124,15 @@ export function Home() {
     const { bookmarks, loadingId, toggleBookmark } = useBookmarks(user?.id)
     const [searchParams, setSearchParams] = useSearchParams()
 
-    // ── URL에서 상태 읽기 (없으면 기본값) ──────────────────────────
+    // 검색창 로컬 state (타이핑 중 URL 변경 방지) 
+    const searchKeyword = searchParams.get('keyword') ?? ''
+    const [inputValue, setInputValue] = useState(searchKeyword)
+
+    // URL에서 상태 읽기 (없으면 기본값) 
     const selectedCategory = searchParams.get('category') ?? '전체'
     const selectedLocation = searchParams.get('location') ?? '전체'
     const sortType = (searchParams.get('sort') ?? 'latest') as SortType
     const page = Number(searchParams.get('page') ?? '1')
-    const searchKeyword = searchParams.get('keyword') ?? ''
     const selectedFeatures = {
         wheelchair: searchParams.get('wheelchair') === 'true',
         elevator: searchParams.get('elevator') === 'true',
@@ -136,8 +140,7 @@ export function Home() {
         parking: searchParams.get('parking') === 'true',
     }
 
-    // ── URL 업데이트 헬퍼 ──────────────────────────────────────────
-    // 기본값은 URL에서 제거해 주소를 깔끔하게 유지
+    // URL 업데이트 헬퍼 
     const DEFAULT_VALUES: Record<string, string> = {
         category: '전체',
         location: '전체',
@@ -163,11 +166,16 @@ export function Home() {
                 })
                 return next
             },
-            { replace: true }, // 히스토리 스택 오염 방지
+            { replace: true },
         )
     }
 
-    // ── 이벤트 핸들러 ─────────────────────────────────────────────
+    // 검색 실행 (버튼 클릭 or 엔터)
+    const handleSearch = () => {
+        updateParams({ keyword: inputValue, page: '1' })
+    }
+
+    // 이벤트 핸들러
     const toggleFeature = (key: keyof typeof selectedFeatures) => {
         updateParams({ [key]: String(!selectedFeatures[key]), page: '1' })
     }
@@ -184,7 +192,7 @@ export function Home() {
 
     const hasSelectedFeatures = Object.values(selectedFeatures).some(Boolean)
 
-    // ── 상수 ──────────────────────────────────────────────────────
+    // 상수
     const categories = Object.keys(CATEGORY_MAP)
     const locations = Object.keys(LOCATION_MAP)
 
@@ -222,13 +230,23 @@ export function Home() {
 
             {/* 검색창 */}
             <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
-                <input
-                    type="text"
-                    placeholder="장소명을 검색해보세요..."
-                    value={searchKeyword}
-                    onChange={(e) => updateParams({ keyword: e.target.value, page: '1' })}
-                    className="w-full rounded-lg border px-4 py-2 text-black focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-white"
-                />
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        placeholder="장소명을 검색해보세요..."
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                        className="w-full rounded-lg border px-4 py-2 text-black focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-white"
+                    />
+                    <button
+                        onClick={handleSearch}
+                        className="flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-600 whitespace-nowrap"
+                    >
+                        <Search className="size-4" />
+                        검색
+                    </button>
+                </div>
             </div>
 
             {/* Filters */}
