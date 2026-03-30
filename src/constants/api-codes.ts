@@ -28,11 +28,11 @@ export const ContentType = {
 
 export const AssistType = {
     parking: '장애인 주차장',
-    publictransport: '대중교통 접근성',
+    publictransport: '휠체어 접근성',
     route: '접근로',
     ticketoffice: '매표소',
     promotion: '홍보물',
-    wheelchair: '휠체어 접근',
+    wheelchair: '휠체어 대여',
     exit: '출입통로',
     elevator: '엘리베이터',
     restroom: '장애인 화장실',
@@ -69,9 +69,7 @@ export const BARRIER_ICONS = {
 }
 
 export function getActiveIcons(place: Record<string, any>) {
-    return Object.entries(BARRIER_ICONS).filter(([key]) => 
-        place[key] !== null && 
-        place[key] !== undefined && 
-        place[key] !== ''
+    return Object.entries(BARRIER_ICONS).filter(
+        ([key]) => place[key] !== null && place[key] !== undefined && place[key] !== '',
     )
 }
