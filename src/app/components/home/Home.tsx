@@ -122,6 +122,7 @@ function PlaceCard({
 export function Home() {
     const { user } = useAuth()
     const { bookmarks, loadingId, toggleBookmark } = useBookmarks(user?.id)
+    const [searchKeyword, setSearchKeyword] = useState('')
 
     const [selectedCategory, setSelectedCategory] = useState<string>('전체')
     const [selectedLocation, setSelectedLocation] = useState<string>('전체')
@@ -153,10 +154,10 @@ export function Home() {
             restroom: selectedFeatures.restroom,
             parking: selectedFeatures.parking,
             sortType,
+            keyword: searchKeyword,
         },
         page,
     )
-
     const toggleFeature = (key: keyof typeof selectedFeatures) => {
         setSelectedFeatures((prev) => ({ ...prev, [key]: !prev[key] }))
         setPage(1)
@@ -179,7 +180,18 @@ export function Home() {
                 </div>
                 <p className="text-lg opacity-90">장애인 편의시설이 잘 갖춰진 식당과 카페를 찾아보세요</p>
             </div>
-
+            <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+                <input
+                    type="text"
+                    placeholder="장소명을 검색해보세요..."
+                    value={searchKeyword}
+                    onChange={(e) => {
+                        setSearchKeyword(e.target.value)
+                        setPage(1)
+                    }}
+                    className="w-full rounded-lg border px-4 py-2 text-black focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-white"
+                />
+            </div>
             {/* Filters */}
             <div className="space-y-4 rounded-xl bg-white p-6 shadow-sm dark:bg-gray-800">
                 {/* 카테고리 */}
@@ -323,37 +335,37 @@ export function Home() {
 
             {/* 페이지네이션 */}
             {!loading && totalPages > 1 && (
-            <div className="mt-8 flex items-center justify-center gap-2">
-                <button
-                    onClick={() => setPage((p) => p - 1)}
-                    disabled={page === 1}
-                    className="rounded-lg bg-gray-100 px-4 py-2 disabled:opacity-50 hover:bg-white dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-500"
-                >
-                    이전
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1)
-                    .filter((p) => p >= Math.max(1, page - 4) && p <= Math.min(totalPages, page + 5))
-                    .map((p) => (
-                        <button
-                            key={p}
-                            onClick={() => setPage(p)}
-                            className={`rounded-lg px-4 py-2 ${
-                                page === p
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-white dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-500'
-                            }`}
-                        >
-                            {p}
-                        </button>
-                    ))}
-                <button
-                    onClick={() => setPage((p) => p + 1)}
-                    disabled={page === totalPages}
-                    className="rounded-lg bg-gray-100 px-4 py-2 disabled:opacity-50 hover:bg-white dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-500"
-                >
-                    다음
-                </button>
-            </div>
+                <div className="mt-8 flex items-center justify-center gap-2">
+                    <button
+                        onClick={() => setPage((p) => p - 1)}
+                        disabled={page === 1}
+                        className="rounded-lg bg-gray-100 px-4 py-2 hover:bg-white disabled:opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-500"
+                    >
+                        이전
+                    </button>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                        .filter((p) => p >= Math.max(1, page - 4) && p <= Math.min(totalPages, page + 5))
+                        .map((p) => (
+                            <button
+                                key={p}
+                                onClick={() => setPage(p)}
+                                className={`rounded-lg px-4 py-2 ${
+                                    page === p
+                                        ? 'bg-blue-500 text-white'
+                                        : 'bg-gray-100 text-gray-700 hover:bg-white dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-500'
+                                }`}
+                            >
+                                {p}
+                            </button>
+                        ))}
+                    <button
+                        onClick={() => setPage((p) => p + 1)}
+                        disabled={page === totalPages}
+                        className="rounded-lg bg-gray-100 px-4 py-2 hover:bg-white disabled:opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-500"
+                    >
+                        다음
+                    </button>
+                </div>
             )}
         </div>
     )

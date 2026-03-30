@@ -9,7 +9,8 @@ interface Filters {
     elevator: boolean
     restroom: boolean
     parking: boolean
-    sortType: 'latest' | 'rating' | 'review'  // review 추가
+    sortType: 'latest' | 'rating' | 'review'
+    keyword: string
 }
 
 // 장소 타입 정의
@@ -45,14 +46,15 @@ export function usePlaces(filters: Filters, page: number = 1) {
     }, [filtersKey, page])
 
     async function fetchPlaces() {
-      setLoading(true)
+        setLoading(true)
 
         const from = (page - 1) * ITEMS_PER_PAGE
         const to = from + ITEMS_PER_PAGE - 1
 
         const tableName = 'places_with_score'
-        const baseColumns = 'content_id, title, address, area_code, content_type, image_url, wheelchair, elevator, restroom, parking, braileblock, audioguide, signguide'
-        const selectString = `${baseColumns}, avg_score, review_count` 
+        const baseColumns =
+            'content_id, title, address, area_code, content_type, image_url, wheelchair, elevator, restroom, parking, braileblock, audioguide, signguide'
+        const selectString = `${baseColumns}, avg_score, review_count`
 
         let query = supabase.from(tableName as any).select(selectString, { count: 'exact' })
 
@@ -65,12 +67,16 @@ export function usePlaces(filters: Filters, page: number = 1) {
         if (filters.category && filters.category !== '전체') {
             query = query.eq('content_type', filters.category)
         }
+        if (filters.keyword.trim()) {
+            const keyword = filters.keyword.trim()
+            query = query.or(`title.ilike.%${keyword}%,address.ilike.%${keyword}%`)
+        }
 
         // 배리어프리 필터 (AND 조건)
         if (filters.wheelchair) query = query.not('wheelchair', 'is', null)
-        if (filters.elevator)   query = query.not('elevator', 'is', null)
-        if (filters.restroom)   query = query.not('restroom', 'is', null)
-        if (filters.parking)    query = query.not('parking', 'is', null)
+        if (filters.elevator) query = query.not('elevator', 'is', null)
+        if (filters.restroom) query = query.not('restroom', 'is', null)
+        if (filters.parking) query = query.not('parking', 'is', null)
 
         // 정렬
         if (filters.sortType === 'latest') {
