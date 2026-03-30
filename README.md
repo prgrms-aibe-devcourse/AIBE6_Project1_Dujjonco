@@ -43,172 +43,180 @@
 ### App/component/post : 사용자들이 사용하는 자유게시판 
 ### App/component/auth : 로그인 회원가입 마이페이지 등 사용자 정보들을 보여주는 화면에 쓰이는 컴포넌트들
 ```
-src
-├── App.css
-├── App.tsx
-├── app
-│   ├── App.tsx
-│   ├── components
-│   │   ├── Community.tsx
-│   │   ├── FacilityDetail.tsx
-│   │   ├── Header.tsx
-│   │   ├── Home.tsx
-│   │   ├── Login.tsx
-│   │   ├── LoginWrapper.tsx
-│   │   ├── MyPage.tsx
-│   │   ├── NotFound.tsx
-│   │   ├── PostDetailPage.tsx
-│   │   ├── Register.tsx
-│   │   ├── RegisterWrapper.tsx
-│   │   ├── Root.tsx
-│   │   ├── UserNickname.tsx
-│   │   ├── bookmark.tsx
-│   │   ├── comment
-│   │   │   ├── comment-editor.tsx
-│   │   │   ├── comment-item.tsx
-│   │   │   └── comment-list.tsx
-│   │   ├── fallback.tsx
-│   │   ├── figma
-│   │   │   └── ImageWithFallback.tsx
-│   │   ├── header
-│   │   │   └── theme-button.tsx
-│   │   ├── loader.tsx
-│   │   ├── modal
-│   │   │   ├── alert-modal.tsx
-│   │   │   └── post-editor-modal.tsx
-│   │   ├── post
-│   │   │   ├── create-post-button.tsx
-│   │   │   ├── delete-post-button.tsx
-│   │   │   ├── edit-post-button.tsx
-│   │   │   ├── like-post-button.tsx
-│   │   │   ├── post-feed.tsx
-│   │   │   └── post-item.tsx
-│   │   └── ui
-│   │       ├── accordion.tsx
-│   │       ├── alert-dialog.tsx
-│   │       ├── alert.tsx
-│   │       ├── aspect-ratio.tsx
-│   │       ├── avatar.tsx
-│   │       ├── badge.tsx
-│   │       ├── breadcrumb.tsx
-│   │       ├── button1.tsx
-│   │       ├── calendar.tsx
-│   │       ├── card.tsx
-│   │       ├── carousel1.tsx
-│   │       ├── chart.tsx
-│   │       ├── checkbox.tsx
-│   │       ├── collapsible.tsx
-│   │       ├── command.tsx
-│   │       ├── context-menu.tsx
-│   │       ├── dialog.tsx
-│   │       ├── drawer.tsx
-│   │       ├── dropdown-menu.tsx
-│   │       ├── form.tsx
-│   │       ├── hover-card.tsx
-│   │       ├── input-otp.tsx
-│   │       ├── input.tsx
-│   │       ├── label.tsx
-│   │       ├── menubar.tsx
-│   │       ├── navigation-menu.tsx
-│   │       ├── pagination.tsx
-│   │       ├── popover.tsx
-│   │       ├── progress.tsx
-│   │       ├── radio-group.tsx
-│   │       ├── resizable.tsx
-│   │       ├── scroll-area.tsx
-│   │       ├── select.tsx
-│   │       ├── separator.tsx
-│   │       ├── sheet.tsx
-│   │       ├── sidebar.tsx
-│   │       ├── skeleton.tsx
-│   │       ├── slider.tsx
-│   │       ├── sonner.tsx
-│   │       ├── switch.tsx
-│   │       ├── table.tsx
-│   │       ├── tabs.tsx
-│   │       ├── textarea.tsx
-│   │       ├── toggle-group.tsx
-│   │       ├── toggle.tsx
-│   │       ├── tooltip.tsx
-│   │       ├── use-mobile.ts
-│   │       └── utils.ts
-│   ├── contexts
-│   │   └── AuthContext.tsx
-│   ├── data
-│   │   └── facilities.tsx
-│   ├── features
-│   │   └── posts
-│   │       ├── components
-│   │       ├── hooks
-│   │       └── services
-│   ├── lib
-│   ├── page
-│   ├── routes.tsx
-│   ├── services
-│   │   ├── auth.ts
-│   │   ├── reviews.ts
-│   │   └── user.ts
-│   ├── ui2
-│   │   ├── button2.tsx
-│   │   ├── carousel2.tsx
-│   │   ├── dialog2.tsx
-│   │   ├── input.tsx
-│   │   ├── popover.tsx
-│   │   ├── sonner.tsx
-│   │   └── textarea.tsx
-│   └── util
-│       └── time.ts
-├── assets
-│   └── default-avatar.png
-├── constants
-│   └── api-codes.ts
-├── database.types.ts
-├── hooks
-│   ├── mutations
-│   │   └── post
-│   │       ├── comment
-│   │       │   ├── use-create-comment.ts
-│   │       │   ├── use-delete-comment.ts
-│   │       │   └── use-update-comment.ts
-│   │       ├── use-create-post.ts
-│   │       ├── use-delete-post.ts
-│   │       ├── use-toggle-post-like.ts
-│   │       └── use-update-post.ts
-│   ├── queries
-│   │   ├── query-keys.ts
-│   │   ├── use-comments-data.ts
-│   │   ├── use-post-data.ts
-│   │   ├── use-posts-data.ts
-│   │   └── use-user-nickname.ts
-│   ├── useBookmark.ts
-│   ├── useFacilityDetail.ts
-│   ├── useFacilityMeta.ts
-│   ├── usePlaces.ts
-│   └── useReviews.ts
-├── index.css
-├── lib
-│   └── utils.ts
-├── main.tsx
-├── provider
-│   └── modal-provider.tsx
-├── store
-│   ├── alert-modal.ts
-│   └── post-editor-modal.ts
-├── styles
-│   ├── fonts.css
-│   ├── index.css
-│   ├── tailwind.css
-│   └── theme.css
-├── supabase
-│   ├── query
-│   │   ├── bookmark.ts
-│   │   ├── post-comments.ts
-│   │   ├── post-images.ts
-│   │   ├── post.ts
-│   │   └── review.ts
-│   └── supabase.ts
-├── types.ts
-└── vite-env.d.ts
+src/
+├── main.tsx                                     # 앱 진입점, React 마운트
+├── vite-env.d.ts                                # Vite 환경변수 타입 선언
+├── database.types.ts                            # Supabase DB 스키마 타입 자동생성
+├── types.ts                                     # 공통 타입 정의 (UseMutationCallback 등)
+│
+├── assets/
+│   └── default-avatar.png                       # 기본 프로필 이미지
+│
+├── constants/
+│   └── api-codes.ts                             # 관광 API 코드 상수 (ContentType, AreaCode 등)
+│
+├── styles/
+│   ├── index.css                                # 전역 CSS 진입점
+│   ├── tailwind.css                             # Tailwind 지시어
+│   ├── fonts.css                                # 폰트 설정
+│   └── theme.css                                # 다크모드 테마 변수
+│
+├── lib/
+│   ├── utils.ts                                 # shadcn/ui 유틸 (cn 함수)
+│   └── time.ts                                  # 시간 포맷 유틸 (formatTimeAgo) 
+│
+├── store/
+│   ├── alert-modal.ts                           # 알림 모달 전역 상태 (Zustand)
+│   └── post-editor-modal.ts                     # 게시글 에디터 모달 전역 상태
+│
+├── provider/
+│   └── modal-provider.tsx                       # 전역 모달 렌더링 프로바이더
+│
+├── supabase/
+│   ├── supabase.ts                              # Supabase 클라이언트 초기화
+│   └── query/
+│       ├── place/
+│       │   └── bookmark.ts                      # 북마크 CRUD 쿼리 
+│       └── post/
+│           ├── post.ts                          # 게시글 CRUD 쿼리
+│           ├── post-comments.ts                 # 댓글 CRUD 쿼리 
+│           └── post-images.ts                   # 게시글 이미지 업로드 
+│
+├── hooks/
+│   ├── place/                                   # 장소 관련 커스텀 훅 
+│   │   ├── useBookmark.ts                       # 북마크 추가/삭제/조회
+│   │   ├── useFacilityDetail.ts                 # 시설 상세 정보 조회
+│   │   ├── useFacilityMeta.ts                   # 시설 메타 정보 (카테고리, 보조장비 등)
+│   │   ├── usePlaces.ts                         # 장소 목록 조회 + 필터링
+│   │   └── useReviews.ts                        # 리뷰 목록/작성/수정/삭제
+│   ├── queries/
+│   │   ├── query-keys.ts                        # React Query 키 상수
+│   │   ├── use-post-data.ts                     # 게시글 단건 조회
+│   │   ├── use-posts-data.ts                    # 게시글 목록 조회
+│   │   ├── use-comments-data.ts                 # 댓글 목록 조회
+│   │   └── use-user-nickname.ts                 # 유저 닉네임 조회
+│   └── mutations/
+│       └── post/
+│           ├── use-create-post.ts               # 게시글 생성
+│           ├── use-delete-post.ts               # 게시글 삭제
+│           ├── use-update-post.ts               # 게시글 수정
+│           ├── use-toggle-post-like.ts          # 좋아요 토글 (낙관적 업데이트)
+│           └── comment/
+│               ├── use-create-comment.ts        # 댓글 생성
+│               ├── use-delete-comment.ts        # 댓글 삭제
+│               └── use-update-comment.ts        # 댓글 수정
+│
+└── app/
+    ├── App.tsx                                  # 앱 루트 컴포넌트 (QueryClient, RouterProvider)
+    ├── routes.tsx                               # React Router 라우트 정의
+    ├── contexts/
+    │   └── AuthContext.tsx                      # 인증 전역 상태 (로그인/로그아웃/유저 정보)
+    ├── services/
+    │   ├── auth.ts                              # 인증 서비스 (Supabase Auth 래핑)
+    │   ├── user.ts                              # 유저 프로필 서비스
+    │   └── reviews.ts                           # 리뷰 서비스 (reviewsService)
+    ├── ui2/                                     # 커스텀 확장 UI 컴포넌트
+    │   ├── button2.tsx                          # 커스텀 버튼
+    │   ├── carousel2.tsx                        # 커스텀 캐러셀
+    │   ├── dialog2.tsx                          # 커스텀 다이얼로그
+    │   ├── input.tsx                            # 커스텀 인풋
+    │   ├── popover.tsx                          # 커스텀 팝오버
+    │   └── textarea.tsx                         # 커스텀 텍스트에어리어
+    └── components/
+        ├── auth/                                # 인증 관련 ← 루트에서 이동
+        │   ├── Login.tsx                        # 로그인 UI (다크모드 적용)
+        │   ├── LoginWrapper.tsx                 # 로그인 페이지 래퍼 (비로그인 전용 가드)
+        │   ├── Register.tsx                     # 회원가입 UI (다크모드 적용)
+        │   └── RegisterWrapper.tsx              # 회원가입 페이지 래퍼
+        ├── common/                              # 공통 레이아웃/유틸 
+        │   ├── Root.tsx                         # 레이아웃 루트 (Header + Outlet)
+        │   ├── Header.tsx                       # 상단 네비게이션 바
+        │   ├── NotFound.tsx                     # 404 페이지
+        │   ├── ErrorFallback.tsx                # 에러 발생 시 대체 UI 
+        │   ├── LoadingSpinner.tsx               # 로딩 스피너 
+        │   ├── ImageWithFallback.tsx            # 이미지 로드 실패 시 대체 표시 
+        │   └── header/
+        │       └── theme-button.tsx             # 다크/라이트 모드 토글 버튼
+        ├── home/                                # 메인 페이지 ← 루트에서 이동
+        │   └── Home.tsx                         # 장소 목록, 검색, 필터, 북마크
+        ├── place/                               # 장소 상세 
+        │   ├── FacilityDetail.tsx               # 시설 상세 페이지
+        │   └── review/
+        │       ├── ReviewList.tsx               # 리뷰 목록
+        │       ├── ReviewItem.tsx               # 리뷰 단건 카드
+        │       ├── ReviewForm.tsx               # 리뷰 작성 폼
+        │       ├── ReviewAverages.tsx           # 리뷰 평점 요약
+        │       └── StarRatingInput.tsx          # 별점 입력 컴포넌트
+        ├── post/                                # 커뮤니티 게시글
+        │   ├── PostListPage.tsx                 # 게시글 목록 페이지
+        │   ├── PostDetailPage.tsx               # 게시글 상세 페이지
+        │   ├── post-feed.tsx                    # 게시글 피드 (목록 렌더링)
+        │   ├── post-item.tsx                    # 게시글 단건 카드
+        │   ├── create-post-button.tsx           # 게시글 작성 버튼
+        │   ├── delete-post-button.tsx           # 게시글 삭제 버튼
+        │   ├── edit-post-button.tsx             # 게시글 수정 버튼
+        │   ├── like-post-button.tsx             # 좋아요 버튼
+        │   └── comment/
+        │       ├── comment-editor.tsx           # 댓글 작성 에디터
+        │       ├── comment-item.tsx             # 댓글 단건
+        │       └── comment-list.tsx             # 댓글 목록
+        ├── user/                                # 마이페이지 ← 루트에서 이동
+        │   ├── MyPage.tsx                       # 마이페이지 (프로필/통계, 다크모드 적용)
+        │   ├── Bookmark.tsx                     # 북마크 목록 (다크모드 적용) 
+        │   ├── ReviewPage.tsx                   # 내 리뷰 목록 (다크모드 적용)
+        │   └── UserNickname.tsx                 # 유저 닉네임 표시 컴포넌트
+        ├── modal/
+        │   ├── alert-modal.tsx                  # 확인/취소 알림 모달
+        │   └── post-editor-modal.tsx            # 게시글 작성/수정 모달
+        └── ui/                                  # shadcn/ui 기본 컴포넌트
+            ├── accordion.tsx
+            ├── alert-dialog.tsx
+            ├── alert.tsx
+            ├── aspect-ratio.tsx
+            ├── avatar.tsx
+            ├── badge.tsx
+            ├── breadcrumb.tsx
+            ├── button1.tsx
+            ├── calendar.tsx
+            ├── card.tsx
+            ├── carousel1.tsx
+            ├── chart.tsx
+            ├── checkbox.tsx
+            ├── collapsible.tsx
+            ├── command.tsx
+            ├── context-menu.tsx
+            ├── dialog.tsx
+            ├── drawer.tsx
+            ├── dropdown-menu.tsx
+            ├── form.tsx
+            ├── hover-card.tsx
+            ├── input-otp.tsx
+            ├── input.tsx
+            ├── label.tsx
+            ├── menubar.tsx
+            ├── navigation-menu.tsx
+            ├── pagination.tsx
+            ├── popover.tsx
+            ├── progress.tsx
+            ├── radio-group.tsx
+            ├── resizable.tsx
+            ├── scroll-area.tsx
+            ├── select.tsx
+            ├── separator.tsx
+            ├── sheet.tsx
+            ├── sidebar.tsx
+            ├── skeleton.tsx
+            ├── slider.tsx
+            ├── sonner.tsx
+            ├── switch.tsx
+            ├── table.tsx
+            ├── tabs.tsx
+            ├── textarea.tsx
+            ├── toggle-group.tsx
+            ├── toggle.tsx
+            ├── tooltip.tsx
+            ├── use-mobile.ts
+            └── utils.ts
 
 ```
 
